@@ -1,8 +1,17 @@
 'use strict';
 
-/**
- * Read the documentation (https://strapi.io/documentation/developer-docs/latest/development/backend-customization.html#core-controllers)
- * to customize this controller
- */
+const { sanitizeEntity } = require('strapi-utils');
 
-module.exports = {};
+module.exports = {
+    async findOne(ctx){
+        const slug = ctx.params.id;
+            
+        const entity = await strapi.query('lecture').findOne({slug});
+        
+        if(entity === null)
+            return ctx.badRequest("Invalid Params");
+
+        return sanitizeEntity(entity, { model: strapi.models.lecture });
+    }
+
+};
