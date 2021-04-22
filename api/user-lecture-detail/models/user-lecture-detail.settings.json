@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_lecture_details",
+  "info": {
+    "name": "userLectureDetail",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "plugin": "users-permissions",
+      "model": "user",
+      "via": "registeredLectures"
+    },
+    "lecture": {
+      "model": "lecture"
+    },
+    "paymentStatus": {
+      "type": "enumeration",
+      "enum": [
+        "stat1",
+        "stat2",
+        "stat3",
+        "stat4"
+      ]
+    },
+    "metaValues": {
+      "type": "json"
+    },
+    "lectureRefCode": {
+      "type": "string"
+    }
+  }
+}

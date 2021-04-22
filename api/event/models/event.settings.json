@@ -1,0 +1,105 @@
+{
+  "kind": "collectionType",
+  "collectionName": "events",
+  "info": {
+    "name": "event",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "submissionStartDate": {
+      "type": "datetime"
+    },
+    "submissionEndDate": {
+      "type": "datetime"
+    },
+    "coverImage": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
+    },
+    "isTeamEvent": {
+      "type": "boolean"
+    },
+    "regStartDate": {
+      "type": "datetime"
+    },
+    "regEndDate": {
+      "type": "datetime"
+    },
+    "regPrice": {
+      "type": "decimal",
+      "default": 0
+    },
+    "maxRegCount": {
+      "type": "integer"
+    },
+    "currentRegCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "contacts": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contact.contact"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "minTeamSize": {
+      "type": "integer"
+    },
+    "maxTeamSize": {
+      "type": "integer"
+    },
+    "isSubmissionEvent": {
+      "type": "boolean"
+    },
+    "description": {
+      "type": "text"
+    },
+    "rules": {
+      "type": "text"
+    },
+    "result": {
+      "type": "text"
+    },
+    "announcements": {
+      "type": "text"
+    },
+    "posterImages": {
+      "collection": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
+    },
+    "metaTitles": {
+      "type": "json"
+    },
+    "commonMetaValues": {
+      "type": "json"
+    }
+  }
+}

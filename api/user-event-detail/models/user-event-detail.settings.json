@@ -1,0 +1,66 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_event_details",
+  "info": {
+    "name": "userEventDetail",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "event": {
+      "model": "event"
+    },
+    "submissions": {
+      "collection": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
+    },
+    "userResponses": {
+      "type": "json"
+    },
+    "teamMembers": {
+      "plugin": "users-permissions",
+      "collection": "user",
+      "via": "registeredEvents",
+      "dominant": true
+    },
+    "metaValues": {
+      "type": "json"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "participating",
+        "position_1",
+        "position_2",
+        "position_3",
+        "knocked_out",
+        "absent",
+        "consolation"
+      ]
+    },
+    "eventRefCode": {
+      "type": "string"
+    },
+    "paymentStatus": {
+      "type": "enumeration",
+      "enum": [
+        "stat1",
+        "stat2",
+        "stat3"
+      ]
+    }
+  }
+}

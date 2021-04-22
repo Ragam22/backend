@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_workshop_details",
+  "info": {
+    "name": "userWorkshopDetails",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "workshop": {
+      "model": "workshop"
+    },
+    "user": {
+      "plugin": "users-permissions",
+      "model": "user",
+      "via": "registeredWorkshops"
+    },
+    "paymentStatus": {
+      "type": "enumeration",
+      "enum": [
+        "stat1",
+        "stat2",
+        "stat3"
+      ]
+    },
+    "metaValues": {
+      "type": "json"
+    },
+    "workshopRefCode": {
+      "type": "string"
+    }
+  }
+}

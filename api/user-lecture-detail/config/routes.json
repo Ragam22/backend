@@ -1,0 +1,52 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/user-lecture-details",
+      "handler": "user-lecture-detail.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/user-lecture-details/count",
+      "handler": "user-lecture-detail.count",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/user-lecture-details/:id",
+      "handler": "user-lecture-detail.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/user-lecture-details",
+      "handler": "user-lecture-detail.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/user-lecture-details/:id",
+      "handler": "user-lecture-detail.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/user-lecture-details/:id",
+      "handler": "user-lecture-detail.delete",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

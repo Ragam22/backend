@@ -1,0 +1,80 @@
+{
+  "kind": "collectionType",
+  "collectionName": "workshops",
+  "info": {
+    "name": "workshop",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "coverImage": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
+    },
+    "regStartDate": {
+      "type": "datetime"
+    },
+    "regEndDate": {
+      "type": "datetime"
+    },
+    "regPrice": {
+      "type": "decimal"
+    },
+    "maxRegCount": {
+      "type": "integer"
+    },
+    "currentRegCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "contacts": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contact.contact"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "description": {
+      "type": "text"
+    },
+    "announcements": {
+      "type": "text"
+    },
+    "posterImages": {
+      "collection": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
+    },
+    "metaTitles": {
+      "type": "json"
+    },
+    "commonMetaValues": {
+      "type": "json"
+    }
+  }
+}

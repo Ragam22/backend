@@ -1,0 +1,52 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/user-workshop-details",
+      "handler": "user-workshop-details.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/user-workshop-details/count",
+      "handler": "user-workshop-details.count",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/user-workshop-details/:id",
+      "handler": "user-workshop-details.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/user-workshop-details",
+      "handler": "user-workshop-details.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/user-workshop-details/:id",
+      "handler": "user-workshop-details.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/user-workshop-details/:id",
+      "handler": "user-workshop-details.delete",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}
