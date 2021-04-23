@@ -26,7 +26,7 @@ module.exports = {
 		const updateData = {
 			user,
 			lecture,
-            lectureRefCode = refCode
+            lectureRefCode : refCode
 		};
 
 		let entity = await strapi.services['user-lecture-detail'].create(updateData);

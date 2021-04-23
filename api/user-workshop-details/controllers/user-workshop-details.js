@@ -26,7 +26,7 @@ module.exports = {
 		const updateData = {
 			user,
 			workshop,
-            workshopRefCode = refCode
+            workshopRefCode : refCode
 		};
 
 		let entity = await strapi.services['user-workshop-detail'].create(updateData);
