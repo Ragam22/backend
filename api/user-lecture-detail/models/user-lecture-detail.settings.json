@@ -18,6 +18,7 @@
       "via": "registeredLectures"
     },
     "lecture": {
+      "autoPopulate": false,
       "model": "lecture"
     },
     "paymentStatus": {

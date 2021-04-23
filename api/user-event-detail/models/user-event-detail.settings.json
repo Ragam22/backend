@@ -13,6 +13,7 @@
   "pluginOptions": {},
   "attributes": {
     "event": {
+      "autoPopulate": false,
       "model": "event"
     },
     "submissions": {
