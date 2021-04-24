@@ -13,7 +13,6 @@
   "pluginOptions": {},
   "attributes": {
     "workshop": {
-      "autoPopulate": false,
       "model": "workshop"
     },
     "user": {
