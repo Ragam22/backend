@@ -10,7 +10,7 @@ module.exports = {
 		if (user.id !== ctx.state.user.id)
 			return ctx.unauthorized("Unauthorized user access");
 
-		const hasUserRegistered = ctx.state.user['registeredWorkshops'].find(o => o.workshop === workshop.id)
+		const hasUserRegistered = ctx.state.user['registeredWorkshops'].find(o => o.workshop.id === workshop.id)
 		if (typeof hasUserRegistered !== 'undefined')
 			return ctx.badRequest("Already registered for workshop");
 
@@ -41,7 +41,7 @@ module.exports = {
 			return ctx.unauthorized("Unauthorized user access");
 
 		const detail = await strapi.services['user-workshop-detail'].findOne({ id: paramId });
-		const workshop = await strapi.services.workshop.findOne({ id: detail.workshop });
+		const workshop = await strapi.services.workshop.findOne({ id: detail.workshop.id });
 
 		if (new Date() < new Date(workshop.regEndDate))
 			detail.metaValues = null;

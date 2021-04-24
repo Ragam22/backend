@@ -10,7 +10,7 @@ module.exports = {
 		if (user.id !== ctx.state.user.id)
 			return ctx.unauthorized("Unauthorized user access");
 
-		const hasUserRegistered = ctx.state.user['registeredEvents'].find(o => o.event === event.id)
+		const hasUserRegistered = ctx.state.user['registeredEvents'].find(o => o.event.id === event.id)
 		if (typeof hasUserRegistered !== 'undefined')
 			return ctx.badRequest("Already registered for event");
 
@@ -41,7 +41,7 @@ module.exports = {
 			return ctx.unauthorized("Not a part of this team");
 
 		const detail = await strapi.services['user-event-detail'].findOne({ id: paramId });
-		const event = await strapi.services.event.findOne({ id: detail.event });
+		const event = await strapi.services.event.findOne({ id: detail.event.id });
 
 		if (new Date() < new Date(event.regEndDate))
 			detail.metaValues = null;
@@ -64,7 +64,7 @@ module.exports = {
 
 		let { teamMembers, submissions } = ctx.request.body;
 
-		let eventObj = await strapi.services.event.findOne({ id: eventDetail.event });
+		let eventObj = await strapi.services.event.findOne({ id: eventDetail.event.id });
 
 		let currentDate = new Date();
 		if (!(new Date(eventObj.regStartDate) < currentDate && currentDate < new Date(eventObj.regEndDate)))
@@ -91,7 +91,7 @@ module.exports = {
 				if (found === null)
 					return ctx.badRequest("Invalid team member id");
 
-				if (typeof (found['registeredEvents'].find(o => o.event === eventDetail.event)) !== 'undefined')
+				if (typeof (found['registeredEvents'].find(o => o.event.id === eventDetail.event.id)) !== 'undefined')
 					return ctx.badRequest("TathvaID " + found.ragamID + " has already registered for this event.");
 			}
 		} else {

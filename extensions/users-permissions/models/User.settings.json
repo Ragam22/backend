@@ -78,14 +78,17 @@
       "type": "string"
     },
     "registeredEvents": {
+      "autoPopulate": true,
       "via": "teamMembers",
       "collection": "user-event-detail"
     },
     "registeredWorkshops": {
+      "autoPopulate": true,
       "via": "user",
       "collection": "user-workshop-details"
     },
     "registeredLectures": {
+      "autoPopulate": true,
       "via": "user",
       "collection": "user-lecture-detail"
     }

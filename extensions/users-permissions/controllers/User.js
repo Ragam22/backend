@@ -38,6 +38,54 @@ module.exports = {
 		let entity = await strapi.query('user', 'users-permissions').update({ id: currentUserId }, updateData);
 		
 		return sanitizeEntity(entity, { model: strapi.plugins['users-permissions'].models.user });
+	},
+
+
+	async me(ctx){
+		const user = ctx.state.user;
+
+		if (!user) {
+			return ctx.badRequest(null, [{ messages: [{ id: 'No authorization header was found' }] }]);
+		}
+
+		const userObj = await strapi.query('user', 'users-permissions').findOne({ id: ctx.state.user.id });
+
+		//required data
+		const {id, email, name, phoneNumber, tathvaId, collegeName, yearOfStudy, referralCode, registeredEvents, registeredWorkshops, registeredLectures} = userObj;
+		const filtered = {id, email, name, phoneNumber, tathvaId, collegeName, yearOfStudy, referralCode, registeredEvents, registeredWorkshops, registeredLectures};
+
+		for(const detail of filtered.registeredEvents){
+			let eventObj = await strapi.services['event'].findOne({ id: detail.event });
+			detail.event = {
+				id: eventObj.id,
+				name:eventObj.name,
+				description: eventObj.description,
+				submissionStartDate: eventObj.submissionStartDate,
+				submissionEndDate: eventObj.submissionEndDate,
+				coverImage: eventObj.coverImage,
+				isSubmissionEvent: eventObj.isSubmissionEvent
+			}
+		}
+		for(const detail of filtered.registeredWorkshops){
+			let workshopObj = await strapi.services['workshop'].findOne({ id: detail.workshop });
+			detail.event = {
+				id: workshopObj.id,
+				name:workshopObj.name,
+				description: workshopObj.description,
+				coverImage: workshopObj.coverImage
+			}
+		}
+		for(const detail of filtered.registeredLectures){
+			let lectureObj = await strapi.services['lecture'].findOne({ id: detail.lecture });
+			detail.event = {
+				id: lectureObj.id,
+				name:lectureObj.name,
+				description: lectureObj.description,
+				coverImage: lectureObj.coverImage
+			}
+		} 
+
+		return sanitizeEntity(filtered, { model: strapi.plugins['users-permissions'].models.user });
 	}
 
 
