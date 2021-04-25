@@ -68,7 +68,7 @@ module.exports = {
 		}
 		for(const detail of filtered.registeredWorkshops){
 			let workshopObj = await strapi.services['workshop'].findOne({ id: detail.workshop });
-			detail.event = {
+			detail.workshop = {
 				id: workshopObj.id,
 				name:workshopObj.name,
 				description: workshopObj.description,
@@ -77,7 +77,7 @@ module.exports = {
 		}
 		for(const detail of filtered.registeredLectures){
 			let lectureObj = await strapi.services['lecture'].findOne({ id: detail.lecture });
-			detail.event = {
+			detail.lecture = {
 				id: lectureObj.id,
 				name:lectureObj.name,
 				description: lectureObj.description,
