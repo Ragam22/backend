@@ -43,6 +43,7 @@ module.exports = {
 
 		const detail = await strapi.services['user-event-detail'].findOne({ id: paramId });
 		const event = await strapi.services.event.findOne({ id: detail.event.id });
+		strapi.log.debug(JSON.stringify(event))
 
 		if (new Date() < new Date(event.regEndDate))
 			detail.metaValues = null;
@@ -65,7 +66,7 @@ module.exports = {
 
 		let { teamMembers, submissions } = ctx.request.body;
 
-		let eventObj = await strapi.services.event.findOne({ id: eventDetail.event.id });
+		let eventObj = await strapi.services.event.findOne({ id: eventDetail.event });
 
 		let currentDate = new Date();
 		if (!(new Date(eventObj.regStartDate) < currentDate && currentDate < new Date(eventObj.regEndDate)))
@@ -92,7 +93,7 @@ module.exports = {
 				if (found === null)
 					return ctx.badRequest("Invalid team member id");
 
-				if (typeof (found['registeredEvents'].find(o => o.event.id === eventDetail.event.id)) !== 'undefined')
+				if (typeof (found['registeredEvents'].find(o => o.event === eventDetail.event.id)) !== 'undefined')
 					return ctx.badRequest("TathvaID " + found.ragamID + " has already registered for this event.");
 			}
 		} else {
