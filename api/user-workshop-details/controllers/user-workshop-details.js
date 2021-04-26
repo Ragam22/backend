@@ -5,7 +5,7 @@ const { sanitizeEntity } = require('strapi-utils');
 module.exports = {
 	async create(ctx) {
 
-		const { user, workshop, refCode } = ctx.request.body;
+		const { user, event: workshop, refCode } = ctx.request.body;
 
 		if (user.id !== ctx.state.user.id)
 			return ctx.unauthorized("Unauthorized user access");

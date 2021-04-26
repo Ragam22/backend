@@ -5,12 +5,10 @@ const { sanitizeEntity } = require('strapi-utils');
 module.exports = {
 	async create(ctx) {
 
-		const { user, event } = ctx.request.body;
+		const { user, event, refCode } = ctx.request.body;
 
 		if (user.id !== ctx.state.user.id)
 			return ctx.unauthorized("Unauthorized user access");
-
-		
 
 		const hasUserRegistered = ctx.state.user['registeredEvents'].find(o => o.event === event.id)
 		if (typeof hasUserRegistered !== 'undefined')
@@ -28,7 +26,8 @@ module.exports = {
 		const updateData = {
 			teamMembers: [{ id: user.id }],
 			event,
-			status: 'participating'
+			status: 'participating',
+			eventRefCode : refCode
 		};
 
 		let entity = await strapi.services['user-event-detail'].create(updateData);
