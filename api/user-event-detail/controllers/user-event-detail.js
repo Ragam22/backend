@@ -10,7 +10,9 @@ module.exports = {
 		if (user.id !== ctx.state.user.id)
 			return ctx.unauthorized("Unauthorized user access");
 
-		const hasUserRegistered = ctx.state.user['registeredEvents'].find(o => o.event.id === event.id)
+		
+
+		const hasUserRegistered = ctx.state.user['registeredEvents'].find(o => o.event === event.id)
 		if (typeof hasUserRegistered !== 'undefined')
 			return ctx.badRequest("Already registered for event");
 
