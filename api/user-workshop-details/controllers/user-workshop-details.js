@@ -29,9 +29,9 @@ module.exports = {
             workshopRefCode : refCode
 		};
 
-		let entity = await strapi.services['user-workshop-detail'].create(updateData);
+		let entity = await strapi.services['user-workshop-details'].create(updateData);
 		entity.metaValues = null;
-		return sanitizeEntity(entity, { model: strapi.models['user-workshop-detail'] });
+		return sanitizeEntity(entity, { model: strapi.models['user-workshop-details'] });
 	},
 
 	async findOne(ctx) {
@@ -40,7 +40,7 @@ module.exports = {
 		if (typeof (ctx.state.user['registeredWorkshops'].find(o => o.id === paramId)) === 'undefined')
 			return ctx.unauthorized("Unauthorized user access");
 
-		const detail = await strapi.services['user-workshop-detail'].findOne({ id: paramId });
+		const detail = await strapi.services['user-workshop-details'].findOne({ id: paramId });
 		const workshop = await strapi.services.workshop.findOne({ id: detail.workshop.id });
 
 		if (new Date() < new Date(workshop.regEndDate))
@@ -49,6 +49,6 @@ module.exports = {
 		if(Array.isArray(workshop.commonMetaValues))
 			detail.metaValues = workshop.commonMetaValues.concat((Array.isArray(detail.metaValues))?detail.metaValues:[]);
 		
-		return sanitizeEntity(detail, { model: strapi.models['user-workshop-detail'] });
+		return sanitizeEntity(detail, { model: strapi.models['user-workshop-details'] });
 	},
 };
