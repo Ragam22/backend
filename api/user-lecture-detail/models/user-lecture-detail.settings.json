@@ -13,9 +13,9 @@
   "pluginOptions": {},
   "attributes": {
     "user": {
+      "via": "registeredLectures",
       "plugin": "users-permissions",
-      "model": "user",
-      "via": "registeredLectures"
+      "model": "user"
     },
     "lecture": {
       "model": "lecture"

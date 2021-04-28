@@ -24,14 +24,16 @@ module.exports = {
 		}
 	  
 		// Extract the fields regular users should be able to edit
-		const { name, phoneNumber, collegeName, yearOfStudy, referralCode } = ctx.request.body;
+		const { name, phoneNumber, collegeName, yearOfStudy, referralCode, state, district } = ctx.request.body;
 
 		const updateData = {
 		  name,
 		  phoneNumber,
 		  collegeName,
 		  yearOfStudy,
-		  referralCode
+		  referralCode,
+		  state,
+		  district
 		};
 	  
 		Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
