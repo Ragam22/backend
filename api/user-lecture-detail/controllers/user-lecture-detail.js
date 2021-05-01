@@ -19,6 +19,9 @@ module.exports = {
 		if (lectureObj === null)
 			return ctx.badRequest('Lecture does not exist');
 
+		if(lectureObj.regPrice !== 0)
+			return ctx.badRequest('This is a paid lecture');
+
 		let currentDate = new Date();
 		if (!(new Date(lectureObj.regStartDate) < currentDate && currentDate < new Date(lectureObj.regEndDate)))
 			return ctx.badRequest('Not in registration period');

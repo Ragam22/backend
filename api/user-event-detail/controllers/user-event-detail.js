@@ -19,6 +19,9 @@ module.exports = {
 		if (eventObj === null)
 			return ctx.badRequest('Event does not exist');
 
+		if(eventObj.regPrice !== 0)
+			return ctx.badRequest('This is a paid event');
+
 		let currentDate = new Date();
 		if (!(new Date(eventObj.regStartDate) < currentDate && currentDate < new Date(eventObj.regEndDate)))
 			return ctx.badRequest('Not in registration period');

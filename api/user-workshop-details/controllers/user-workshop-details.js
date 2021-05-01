@@ -14,13 +14,16 @@ module.exports = {
 		if (typeof hasUserRegistered !== 'undefined')
 			return ctx.badRequest("Already registered for workshop");
 
-		let lectureObj = await strapi.services.workshop.findOne({ id: workshop.id });
+		let workshopObj = await strapi.services.workshop.findOne({ id: workshop.id });
 
-		if (lectureObj === null)
+		if (workshopObj === null)
 			return ctx.badRequest('Workshop does not exist');
 
+		if(workshopObj.regPrice !== 0)
+			return ctx.badRequest('This is a paid workshop');
+
 		let currentDate = new Date();
-		if (!(new Date(lectureObj.regStartDate) < currentDate && currentDate < new Date(lectureObj.regEndDate)))
+		if (!(new Date(workshopObj.regStartDate) < currentDate && currentDate < new Date(workshopObj.regEndDate)))
 			return ctx.badRequest('Not in registration period');
 
 		const updateData = {
