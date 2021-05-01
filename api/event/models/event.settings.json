@@ -44,10 +44,12 @@
     },
     "regPrice": {
       "type": "decimal",
-      "default": 0
+      "default": 0,
+      "min": 0
     },
     "maxRegCount": {
-      "type": "integer"
+      "type": "integer",
+      "default": 100000
     },
     "currentRegCount": {
       "type": "integer",
