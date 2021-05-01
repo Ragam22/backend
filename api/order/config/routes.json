@@ -1,0 +1,20 @@
+{
+  "routes": [
+    {
+      "method": "POST",
+      "path":"/orders/pay",
+      "handler": "order.startPayment",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path":"/orders/paymentComplete",
+      "handler": "order.onPaymentComplete",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

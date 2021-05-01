@@ -32,9 +32,9 @@
       "type": "json"
     },
     "teamMembers": {
-      "via": "registeredEvents",
       "plugin": "users-permissions",
       "collection": "user",
+      "via": "registeredEvents",
       "dominant": true
     },
     "metaValues": {
@@ -54,14 +54,6 @@
     },
     "eventRefCode": {
       "type": "string"
-    },
-    "paymentStatus": {
-      "type": "enumeration",
-      "enum": [
-        "stat1",
-        "stat2",
-        "stat3"
-      ]
     }
   }
 }

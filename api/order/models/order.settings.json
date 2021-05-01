@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "name": "order",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "plugin": "users-permissions",
+      "model": "user"
+    },
+    "paymentType": {
+      "type": "enumeration",
+      "enum": [
+        "donation",
+        "workshop",
+        "lecture",
+        "event"
+      ]
+    },
+    "donationAmount": {
+      "type": "integer"
+    },
+    "orderId": {
+      "type": "uid"
+    },
+    "receipt": {
+      "type": "uid"
+    },
+    "refCode": {
+      "type": "string"
+    },
+    "entity": {
+      "type": "json"
+    }
+  }
+}

@@ -16,17 +16,9 @@
       "model": "workshop"
     },
     "user": {
-      "via": "registeredWorkshops",
       "plugin": "users-permissions",
-      "model": "user"
-    },
-    "paymentStatus": {
-      "type": "enumeration",
-      "enum": [
-        "stat1",
-        "stat2",
-        "stat3"
-      ]
+      "model": "user",
+      "via": "registeredWorkshops"
     },
     "metaValues": {
       "type": "json"

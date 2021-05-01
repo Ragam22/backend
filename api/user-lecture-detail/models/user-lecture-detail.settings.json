@@ -13,21 +13,12 @@
   "pluginOptions": {},
   "attributes": {
     "user": {
-      "via": "registeredLectures",
       "plugin": "users-permissions",
-      "model": "user"
+      "model": "user",
+      "via": "registeredLectures"
     },
     "lecture": {
       "model": "lecture"
-    },
-    "paymentStatus": {
-      "type": "enumeration",
-      "enum": [
-        "stat1",
-        "stat2",
-        "stat3",
-        "stat4"
-      ]
     },
     "metaValues": {
       "type": "json"

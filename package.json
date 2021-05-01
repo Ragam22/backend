@@ -11,6 +11,7 @@
   },
   "devDependencies": {},
   "dependencies": {
+    "axios": "^0.21.1",
     "knex": "0.21.18",
     "nanoid": "^3.1.22",
     "sqlite3": "5.0.0",
