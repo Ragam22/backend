@@ -9,14 +9,12 @@ module.exports = {
 
         const {user, paymentType, entity, refCode, donationAmount} = ctx.request.body
         
-        // if(user.id !== ctx.state.user.id){
-        //     return ctx.unauthorized("Invalid User Id");
-        // }
+        if(user.id !== ctx.state.user.id){
+            return ctx.unauthorized("Invalid User Id");
+        }
 
         let orderObj = {
-            user : {
-                "id":1
-            },
+            user,
             paymentType,
             refCode,
             isPaymentComplete: false
