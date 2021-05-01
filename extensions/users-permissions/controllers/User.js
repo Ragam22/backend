@@ -53,8 +53,22 @@ module.exports = {
 		const userObj = await strapi.query('user', 'users-permissions').findOne({ id: ctx.state.user.id });
 
 		//required data
-		const {id, email, name, phoneNumber, tathvaId, collegeName, yearOfStudy, referralCode, registeredEvents, registeredWorkshops, registeredLectures} = userObj;
-		const filtered = {id, email, name, phoneNumber, tathvaId, collegeName, yearOfStudy, referralCode, registeredEvents, registeredWorkshops, registeredLectures};
+		const filtered = {
+			id: 					userObj.id,
+			email: 					userObj.email,
+			name: 					userObj.name,
+			phoneNumber: 			userObj.phoneNumber,
+			tathvaId: 				userObj.tathvaId,
+			collegeName: 			userObj.collegeName,
+			yearOfStudy: 			userObj.yearOfStudy,
+			state: 					userObj.state,
+			district: 				userObj.district,
+			referralCode: 			userObj.referralCode,
+			registeredEvents: 		userObj.registeredEvents,
+			registeredWorkshops: 	userObj.registeredWorkshops,
+			registeredLecture: 		userObj.registeredLectures
+		}
+
 
 		for(const detail of filtered.registeredEvents){
 			let eventObj = await strapi.services['event'].findOne({ id: detail.event });
@@ -89,6 +103,4 @@ module.exports = {
 
 		return sanitizeEntity(filtered, { model: strapi.plugins['users-permissions'].models.user });
 	}
-
-
 };

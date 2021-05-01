@@ -78,19 +78,19 @@
       "type": "string"
     },
     "registeredEvents": {
+      "via": "teamMembers",
       "autoPopulate": true,
-      "collection": "user-event-detail",
-      "via": "teamMembers"
+      "collection": "user-event-detail"
     },
     "registeredWorkshops": {
+      "via": "user",
       "autoPopulate": true,
-      "collection": "user-workshop-details",
-      "via": "user"
+      "collection": "user-workshop-details"
     },
     "registeredLectures": {
+      "via": "user",
       "autoPopulate": true,
-      "collection": "user-lecture-detail",
-      "via": "user"
+      "collection": "user-lecture-detail"
     },
     "state": {
       "type": "string"
