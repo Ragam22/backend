@@ -39,6 +39,9 @@
     },
     "entity": {
       "type": "json"
+    },
+    "isPaymentComplete": {
+      "type": "boolean"
     }
   }
 }

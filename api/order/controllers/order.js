@@ -18,7 +18,8 @@ module.exports = {
                 "id":1
             },
             paymentType,
-            refCode
+            refCode,
+            isPaymentComplete: false
         };
 
         let orderAmount;
@@ -40,7 +41,7 @@ module.exports = {
             if(paymentType !== "event" && paymentType !== "workshop" && paymentType !== "lecture")
                 return ctx.badRequest("Invalid payment type");
             
-            const found = await strapi.services[paymentType].findOne({ id: entity.id });;
+            const found = await strapi.services[paymentType].findOne({ id: entity.id });
             if(found === null)
                 return ctx.badRequest("Invalid entity id");
             if(found.currentRegCount >= found.maxRegCount)
@@ -51,6 +52,18 @@ module.exports = {
             orderAmount = Math.floor(found.regPrice*100);
         }
 
+        let existing = await strapi.services.order.findOne(
+            {
+                "user.id":      orderObj.user.id,
+                "paymentType":  orderObj.paymentType,
+                "entity":       JSON.stringify(orderObj.entity)
+            }
+        );
+
+        if(existing !== null)
+            return {orderId: existing.orderId};
+
+        
         const razorpayBody = {
             amount: orderAmount,
             currency: "INR",
@@ -67,7 +80,8 @@ module.exports = {
             orderObj.orderId = response.data.id;
             orderObj.receipt = response.data.receipt;
             await strapi.services.order.create(orderObj);
-            return response.data;
+            return {orderId: response.data.id};
+
         } catch (error){
             return ctx.badRequest("Payment Failed");
         }
@@ -81,11 +95,11 @@ module.exports = {
         const digest = shasum.digest('hex');
 
         if(digest !== ctx.request.headers['x-razorpay-signature']){
-            strapi.log.debug("lies");
             return ctx.unauthorized("Lies");
         }
 
         let orderObj = await strapi.services.order.findOne({orderId: ctx.request.body.payload.payment.entity['order_id']});
+        await strapi.services.order.update({id: orderObj.id}, {isPaymentComplete: true});
 
         switch(orderObj.paymentType){
             case "event":
