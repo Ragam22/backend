@@ -97,6 +97,14 @@ module.exports = {
         let orderObj = await strapi.services.order.findOne({orderId: ctx.request.body.payload.payment.entity['order_id']});
         await strapi.services.order.update({id: orderObj.id}, {isPaymentComplete: true});
 
+
+        if(orderObj.paymentType === "event" || orderObj.paymentType === "workshop" || orderObj.paymentType === "lecture"){
+            await strapi.query(orderObj.paymentType).model.query((qb) => {
+                qb.where("id", orderObj.entity.id);
+                qb.increment("currentRegCount", 1);
+            }).fetch();
+        }
+        
         switch(orderObj.paymentType){
             case "event":
                 const eventDetail = {
@@ -124,11 +132,9 @@ module.exports = {
                 await strapi.services['user-lecture-detail'].create(lectureDetail);
                 break;
             case "donation":
-                const totalDonations = await strapi.services['donation-total'].find();
-                const updatedDonations = {
-                    amount: totalDonations.amount + orderObj.donationAmount/100
-                };
-                await strapi.services['donation-total'].createOrUpdate(updatedDonations);
+                await strapi.query("donation-total").model.query((qb) => {
+                    qb.increment("amount", orderObj.donationAmount);
+                }).fetch();
                 break;
         }
          

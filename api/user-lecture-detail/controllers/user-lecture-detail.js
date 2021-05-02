@@ -32,6 +32,11 @@ module.exports = {
             lectureRefCode : refCode
 		};
 
+		await strapi.query("lecture").model.query((qb) => {
+            qb.where("id", lectureObj.id);
+            qb.increment("currentRegCount", 1);
+		}).fetch();
+
 		let entity = await strapi.services['user-lecture-detail'].create(updateData);
 		entity.metaValues = null;
 		return sanitizeEntity(entity, { model: strapi.models['user-lecture-detail'] });

@@ -32,6 +32,11 @@ module.exports = {
             workshopRefCode : refCode
 		};
 
+		await strapi.query("workshop").model.query((qb) => {
+            qb.where("id", workshopObj.id);
+            qb.increment("currentRegCount", 1);
+		}).fetch();
+
 		let entity = await strapi.services['user-workshop-details'].create(updateData);
 		entity.metaValues = null;
 		return sanitizeEntity(entity, { model: strapi.models['user-workshop-details'] });
