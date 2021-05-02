@@ -1,0 +1,20 @@
+{
+  "kind": "singleType",
+  "collectionName": "donation_totals",
+  "info": {
+    "name": "donationTotal",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "amount": {
+      "type": "decimal",
+      "default": 0
+    }
+  }
+}

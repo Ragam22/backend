@@ -1,0 +1,28 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/donation-total",
+      "handler": "donation-total.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/donation-total",
+      "handler": "donation-total.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/donation-total",
+      "handler": "donation-total.delete",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

@@ -6,8 +6,7 @@ module.exports = {
         const { nanoid } = require('nanoid');
         const axios = require('axios');
 
-
-        const {user, paymentType, entity, refCode, donationAmount} = ctx.request.body
+        const {user, paymentType, entity, refCode, donationAmount} = ctx.request.body;
         
         if(user.id !== ctx.state.user.id){
             return ctx.unauthorized("Invalid User Id");
@@ -48,19 +47,18 @@ module.exports = {
                 return ctx.badRequest("Registration is free!");
 
             orderAmount = Math.floor(found.regPrice*100);
+
+            let existing = await strapi.services.order.findOne(
+                {
+                    "user.id":      orderObj.user.id,
+                    "paymentType":  orderObj.paymentType,
+                    "entity":       JSON.stringify(orderObj.entity)
+                }
+            );
+
+            if(existing !== null)
+                return {orderId: existing.orderId};
         }
-
-        let existing = await strapi.services.order.findOne(
-            {
-                "user.id":      orderObj.user.id,
-                "paymentType":  orderObj.paymentType,
-                "entity":       JSON.stringify(orderObj.entity)
-            }
-        );
-
-        if(existing !== null)
-            return {orderId: existing.orderId};
-
         
         const razorpayBody = {
             amount: orderAmount,
@@ -124,6 +122,13 @@ module.exports = {
                     lectureRefCode: orderObj.refCode
                 }
                 await strapi.services['user-lecture-detail'].create(lectureDetail);
+                break;
+            case "donation":
+                const totalDonations = await strapi.services['donation-total'].find();
+                const updatedDonations = {
+                    amount: totalDonations.amount + orderObj.donationAmount/100
+                };
+                await strapi.services['donation-total'].createOrUpdate(updatedDonations);
                 break;
         }
          

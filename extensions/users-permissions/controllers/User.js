@@ -66,7 +66,7 @@ module.exports = {
 			referralCode: 			userObj.referralCode,
 			registeredEvents: 		userObj.registeredEvents,
 			registeredWorkshops: 	userObj.registeredWorkshops,
-			registeredLectures: 		userObj.registeredLectures
+			registeredLectures: 	userObj.registeredLectures
 		}
 
 
