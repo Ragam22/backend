@@ -47,6 +47,14 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "DELETE",
+      "path" : "/submissions/:detailId/:submissionId",
+      "handler": "user-event-detail.deleteSubmission",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

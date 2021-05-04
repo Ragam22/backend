@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_submission_info_submission_infos",
+  "info": {
+    "name": "submissionInfo",
+    "icon": "apple-alt"
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string"
+    },
+    "submissionType": {
+      "type": "enumeration",
+      "enum": [
+        "textInput",
+        "fileUpload"
+      ]
+    }
+  }
+}

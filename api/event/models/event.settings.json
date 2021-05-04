@@ -70,9 +70,6 @@
     "maxTeamSize": {
       "type": "integer"
     },
-    "isSubmissionEvent": {
-      "type": "boolean"
-    },
     "description": {
       "type": "text"
     },
@@ -102,6 +99,11 @@
     },
     "commonMetaValues": {
       "type": "json"
+    },
+    "submissionInfo": {
+      "type": "component",
+      "repeatable": true,
+      "component": "submission-info.submission-info"
     }
   }
 }

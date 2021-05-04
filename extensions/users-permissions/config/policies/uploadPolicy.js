@@ -13,9 +13,9 @@ module.exports = async (ctx, next) => {
 
     let eventObj = await strapi.services.event.findOne({ id: found.event });
 
+    const isSubmissionEvent = Array.isArray(eventObj.submissionInfo) && eventObj.submissionInfo.length > 0;
     let currentDate = new Date();
-    if(!(eventObj.isSubmissionEvent && new Date(eventObj.submissionStartDate) < currentDate && 
-                currentDate < new Date(eventObj.submissionEndDate)))
+    if(!(isSubmissionEvent && new Date(eventObj.submissionStartDate) < currentDate && currentDate < new Date(eventObj.submissionEndDate)))
         return ctx.badRequest("Submissions cannot be edited");
 
     ctx.request.body.ref = 'user-event-detail';

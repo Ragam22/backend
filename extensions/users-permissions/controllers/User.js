@@ -70,7 +70,7 @@ module.exports = {
 		}
 
 
-		for(const detail of filtered.registeredEvents){
+		for(let detail of filtered.registeredEvents){
 			let eventObj = await strapi.services['event'].findOne({ id: detail.event });
 			detail.event = {
 				id: eventObj.id,
@@ -78,9 +78,9 @@ module.exports = {
 				description: eventObj.description,
 				submissionStartDate: eventObj.submissionStartDate,
 				submissionEndDate: eventObj.submissionEndDate,
-				coverImage: eventObj.coverImage,
-				isSubmissionEvent: eventObj.isSubmissionEvent
+				coverImage: eventObj.coverImage
 			}
+			delete detail.submissions;
 		}
 		for(const detail of filtered.registeredWorkshops){
 			let workshopObj = await strapi.services['workshop'].findOne({ id: detail.workshop });
@@ -101,6 +101,6 @@ module.exports = {
 			}
 		} 
 
-		return sanitizeEntity(filtered, { model: strapi.plugins['users-permissions'].models.user });
+		return filtered;
 	}
 };

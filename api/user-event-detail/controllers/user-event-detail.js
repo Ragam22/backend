@@ -39,7 +39,6 @@ module.exports = {
 		}).fetch();
 		 
 		let entity = await strapi.services['user-event-detail'].create(updateData);
-		entity.metaValues = null;
 		return sanitizeEntity(entity, { model: strapi.models['user-event-detail'] });
 	},
 
@@ -51,15 +50,24 @@ module.exports = {
 
 		const detail = await strapi.services['user-event-detail'].findOne({ id: paramId });
 		const event = await strapi.services.event.findOne({ id: detail.event.id });
-		strapi.log.debug(JSON.stringify(event))
-
-		if (new Date() < new Date(event.regEndDate))
-			detail.metaValues = null;
         
 		if(Array.isArray(event.commonMetaValues))
 			detail.metaValues = event.commonMetaValues.concat((Array.isArray(detail.metaValues))?detail.metaValues:[]);
+
+		if(Array.isArray(detail.userResponses)){
+			for (let res of detail.userResponses){
+				if(typeof res.response === 'number')
+					res.response = detail.submissions.find(o => o.id === res.response);
+			}
+		}
 		
-		return sanitizeEntity(detail, { model: strapi.models['user-event-detail'] });
+		delete detail.submissions;
+		delete detail.created_by;
+		delete detail.updated_by;
+		delete detail.created_at;
+		delete detail.updated_at;
+		delete detail.published_at;
+		return detail;
 	},
 
 	async update(ctx) {
@@ -72,21 +80,14 @@ module.exports = {
 		if (eventDetail.status !== 'participating')
 			return ctx.unauthorized('Cannot edit this field');
 
-		let { teamMembers, submissions } = ctx.request.body;
+		const { teamMembers, userResponses } = ctx.request.body;
 
-		let eventObj = await strapi.services.event.findOne({ id: eventDetail.event });
+		let eventObj = await strapi.services.event.findOne({ id: eventDetail.event.id });
+		let currentDate = new Date();	
+		let updateData = {}
 
-		let currentDate = new Date();
-		if (!(new Date(eventObj.regStartDate) < currentDate && currentDate < new Date(eventObj.regEndDate)))
-			teamMembers = null;
+		if (new Date(eventObj.regStartDate) < currentDate && currentDate < new Date(eventObj.regEndDate) && Array.isArray(teamMembers)){
 
-		if (!(eventObj.isSubmissionEvent && new Date(eventObj.submissionStartDate) < currentDate && 
-		currentDate < new Date(new Date(eventObj.submissionEndDate).getTime() + 900000)))		//15 minutes late submission window
-			submissions = null;
-
-		eventDetail = await strapi.services['user-event-detail'].findOne({ id: eventDetail.id })
-
-		if (Array.isArray(teamMembers)) {
 			if (teamMembers.length > eventObj.maxTeamSize || teamMembers.length < 1)
 				return ctx.badRequest("Invalid team size");
 
@@ -102,32 +103,47 @@ module.exports = {
 					return ctx.badRequest("Invalid team member id");
 
 				if (typeof (found['registeredEvents'].find(o => o.event === eventDetail.event.id)) !== 'undefined')
-					return ctx.badRequest("TathvaID " + found.ragamID + " has already registered for this event.");
+					return ctx.badRequest("TathvaID " + found.tathvaId + " has already registered for this event.");
 			}
-		} else {
-			teamMembers = null;
+
+			updateData.teamMembers = teamMembers;
 		}
 
-		if (!Array.isArray(submissions))
-			submissions = null;
+		eventDetail = await strapi.services['user-event-detail'].findOne({ id: eventDetail.id });		//get full detail
 
-		const savedSubmissions = eventDetail.submissions;
-		if(submissions != null){
-			const savedSubmissions = eventDetail.submissions;
-			for (const sub of savedSubmissions) {
-				let found = submissions.find(o => o.id === sub.id);
-				if (typeof found === 'undefined') {
-					await strapi.plugins['upload'].services.upload.remove(sub);
+		if(Array.isArray(userResponses) && new Date(eventObj.submissionStartDate) < currentDate && currentDate < new Date(eventObj.submissionEndDate)){
+			updateData.userResponses = eventDetail.userResponses;
+			if(updateData.userResponses === null)
+				updateData.userResponses = []
+
+			for(const res of userResponses){
+				const {resId, response} = res;
+
+				let newResponse =  updateData.userResponses.find(o => o.resId === resId);
+				if(typeof newResponse === 'undefined'){
+					newResponse = {
+						resId: resId,
+						response: response
+					};
+					updateData.userResponses.push(newResponse);
+				}
+
+				const subInfo = eventObj.submissionInfo.find(o => o.id === resId);
+				 
+				if(subInfo.submissionType === 'textInput' && typeof response !== 'string'){
+					return ctx.badRequest("Invalid response type");
+
+				} else if (subInfo.submissionType == 'fileUpload') {
+					if(typeof eventDetail.submissions.find(o => o.id === response) === 'undefined')
+						return ctx.badRequest("Invalid submission id");                         
+
+					newResponse.response = response;		//only edit responses for submissions
 				}
 			}
 		}
 
-		const updateData = { teamMembers, savedSubmissions };
-		Object.keys(updateData).forEach(key => updateData[key] === null && delete updateData[key]);
-
-		let entity = await strapi.services['user-event-detail'].update({ id: eventDetail.id }, updateData);
-		entity.metaValues = null;
-		return sanitizeEntity(entity, { model: strapi.models['user-event-detail'] });
+		await strapi.services['user-event-detail'].update({ id: eventDetail.id }, updateData);
+		return updateData;
 	},
 
 	async delete(ctx) {
@@ -145,5 +161,18 @@ module.exports = {
 		detail.metaValues = null;
 		return sanitizeEntity(detail, { model: strapi.models['user-event-detail'] });
 	},
+
+	async deleteSubmission(ctx) {
+		const detailId = Number.parseInt(ctx.params.detailId);
+		const subId = Number.parseInt(ctx.params.submissionId);
+
+		const eventDetail = await strapi.services['user-event-detail'].findOne({ id: detailId });
+
+		if(typeof eventDetail.submissions.find(o => o.id === subId) === 'undefined')
+			return ctx.badRequest("Invalid submission id");                         
+
+		await strapi.plugins['upload'].services.upload.remove({id: subId});
+		return "Removed";
+	}
 
 };
