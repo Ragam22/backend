@@ -133,7 +133,7 @@ module.exports = {
                 break;
             case "donation":
                 await strapi.query("donation-total").model.query((qb) => {
-                    qb.increment("amount", orderObj.donationAmount);
+                    qb.increment("amount", orderObj.donationAmount/100);
                 }).fetch();
                 break;
         }
