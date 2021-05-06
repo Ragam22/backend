@@ -13,7 +13,8 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "submissionStartDate": {
       "type": "datetime"
@@ -34,26 +35,32 @@
       "pluginOptions": {}
     },
     "isTeamEvent": {
-      "type": "boolean"
+      "type": "boolean",
+      "required": true
     },
     "regStartDate": {
-      "type": "datetime"
+      "type": "datetime",
+      "required": true
     },
     "regEndDate": {
-      "type": "datetime"
+      "type": "datetime",
+      "required": true
     },
     "regPrice": {
       "type": "decimal",
       "default": 0,
-      "min": 0
+      "min": 0,
+      "required": true
     },
     "maxRegCount": {
       "type": "integer",
-      "default": 100000
+      "default": 100000,
+      "required": true
     },
     "currentRegCount": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "required": true
     },
     "contacts": {
       "type": "component",
@@ -62,13 +69,15 @@
     },
     "slug": {
       "type": "uid",
-      "targetField": "name"
+      "targetField": "name",
+      "required": true
     },
     "minTeamSize": {
       "type": "integer"
     },
     "maxTeamSize": {
-      "type": "integer"
+      "type": "integer",
+      "required": true
     },
     "description": {
       "type": "text"
