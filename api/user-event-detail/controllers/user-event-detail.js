@@ -132,7 +132,7 @@ module.exports = {
 
         if (
           typeof found["registeredEvents"].find(
-            (o) => o.event === eventDetail.event.id
+            (o) => o.event === eventDetail.event
           ) !== "undefined"
         )
           return ctx.badRequest(
