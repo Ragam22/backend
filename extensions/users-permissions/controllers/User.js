@@ -93,11 +93,10 @@ module.exports = {
     };
 
     for (let detail of filtered.registeredEvents) {
-      strapi.log.debug(JSON.stringify(detail));
       let eventObj = await strapi.services["event"].findOne({
         id: detail.event,
       });
-      strapi.log.debug(JSON.stringify(eventObj));
+
       detail.event = {
         id: eventObj.id,
         name: eventObj.name,
