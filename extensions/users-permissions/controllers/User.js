@@ -20,34 +20,6 @@ module.exports = {
     });
   },
 
-  async update(ctx) {
-    const currentUserId = ctx.state.user.id;
-
-    if (currentUserId !== Number.parseInt(ctx.params.id, 10)) {
-      return ctx.unauthorized("Unable to edit this user");
-    }
-
-    // Extract the fields regular users should be able to edit
-    const { name, phoneNumber, collegeName, yearOfStudy, referralCode, state, district } = ctx.request.body;
-
-    const updateData = {
-      name,
-      phoneNumber,
-      collegeName,
-      yearOfStudy,
-      referralCode,
-      state,
-      district,
-    };
-
-    Object.keys(updateData).forEach((key) => updateData[key] === undefined && delete updateData[key]);
-    let entity = await strapi.query("user", "users-permissions").update({ id: currentUserId }, updateData);
-
-    return sanitizeEntity(entity, {
-      model: strapi.plugins["users-permissions"].models.user,
-    });
-  },
-
   async me(ctx) {
     const user = ctx.state.user;
 
