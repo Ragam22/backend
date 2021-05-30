@@ -78,18 +78,18 @@
       "type": "string"
     },
     "registeredEvents": {
-      "via": "teamMembers",
       "autoPopulate": true,
+      "via": "teamMembers",
       "collection": "user-event-detail"
     },
     "registeredWorkshops": {
-      "via": "user",
       "autoPopulate": true,
+      "via": "user",
       "collection": "user-workshop-details"
     },
     "registeredLectures": {
-      "via": "user",
       "autoPopulate": true,
+      "via": "user",
       "collection": "user-lecture-detail"
     },
     "state": {
@@ -97,6 +97,9 @@
     },
     "district": {
       "type": "string"
+    },
+    "certificates": {
+      "type": "json"
     }
   }
 }

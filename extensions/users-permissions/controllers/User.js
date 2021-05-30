@@ -6,11 +6,9 @@ module.exports = {
   async findOne(ctx) {
     const tathvaId = ctx.params.id;
 
-    const entity = await strapi
-      .query("user", "users-permissions")
-      .findOne({ tathvaId });
+    const entity = await strapi.query("user", "users-permissions").findOne({ tathvaId });
 
-    if (entity === null) return ctx.badRequest("Invalid ID");
+    if (!entity) return ctx.badRequest("Invalid ID");
     const entity2 = {
       id: entity.id,
       name: entity.name,
@@ -30,15 +28,7 @@ module.exports = {
     }
 
     // Extract the fields regular users should be able to edit
-    const {
-      name,
-      phoneNumber,
-      collegeName,
-      yearOfStudy,
-      referralCode,
-      state,
-      district,
-    } = ctx.request.body;
+    const { name, phoneNumber, collegeName, yearOfStudy, referralCode, state, district } = ctx.request.body;
 
     const updateData = {
       name,
@@ -50,12 +40,8 @@ module.exports = {
       district,
     };
 
-    Object.keys(updateData).forEach(
-      (key) => updateData[key] === undefined && delete updateData[key]
-    );
-    let entity = await strapi
-      .query("user", "users-permissions")
-      .update({ id: currentUserId }, updateData);
+    Object.keys(updateData).forEach((key) => updateData[key] === undefined && delete updateData[key]);
+    let entity = await strapi.query("user", "users-permissions").update({ id: currentUserId }, updateData);
 
     return sanitizeEntity(entity, {
       model: strapi.plugins["users-permissions"].models.user,
@@ -65,15 +51,9 @@ module.exports = {
   async me(ctx) {
     const user = ctx.state.user;
 
-    if (!user) {
-      return ctx.badRequest(null, [
-        { messages: [{ id: "No authorization header was found" }] },
-      ]);
-    }
+    if (!user) return ctx.badRequest("No authorization header was found");
 
-    const userObj = await strapi
-      .query("user", "users-permissions")
-      .findOne({ id: ctx.state.user.id });
+    const userObj = await strapi.query("user", "users-permissions").findOne({ id: user.id });
 
     //required data
     const filtered = {
@@ -90,6 +70,7 @@ module.exports = {
       registeredEvents: userObj.registeredEvents,
       registeredWorkshops: userObj.registeredWorkshops,
       registeredLectures: userObj.registeredLectures,
+      certificates: userObj.certificates,
     };
 
     for (let detail of filtered.registeredEvents) {

@@ -32,9 +32,9 @@
       "type": "json"
     },
     "teamMembers": {
+      "via": "registeredEvents",
       "plugin": "users-permissions",
       "collection": "user",
-      "via": "registeredEvents",
       "dominant": true
     },
     "metaValues": {
