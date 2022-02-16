@@ -42,7 +42,7 @@ module.exports = {
       registeredEvents: userObj.registeredEvents,
       registeredWorkshops: userObj.registeredWorkshops,
       registeredLectures: userObj.registeredLectures,
-      certificates: userObj.certificates,
+      certificates: userObj.certificates, 
     };
 
     for (let detail of filtered.registeredEvents) {
@@ -57,8 +57,9 @@ module.exports = {
         submissionStartDate: eventObj.submissionStartDate,
         submissionEndDate: eventObj.submissionEndDate,
         coverImage: eventObj.coverImage,
+        slug: eventObj.slug,
       };
-      delete detail.submissions;
+      // delete detail.submissions;
     }
     for (const detail of filtered.registeredWorkshops) {
       let workshopObj = await strapi.services["workshop"].findOne({
