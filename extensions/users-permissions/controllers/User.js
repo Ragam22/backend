@@ -54,12 +54,12 @@ module.exports = {
         id: eventObj.id,
         name: eventObj.name,
         description: eventObj.description,
-        submissionStartDate: eventObj.submissionStartDate,
-        submissionEndDate: eventObj.submissionEndDate,
+        // submissionStartDate: eventObj.submissionStartDate,
+        // submissionEndDate: eventObj.submissionEndDate,
         coverImage: eventObj.coverImage,
         slug: eventObj.slug,
       };
-      // delete detail.submissions;
+      delete detail.submissions;
     }
     for (const detail of filtered.registeredWorkshops) {
       let workshopObj = await strapi.services["workshop"].findOne({

@@ -66,7 +66,7 @@ module.exports = {
       }
     }
 
-    delete detail.submissions;
+    // delete detail.submissions;
     delete detail.created_by;
     delete detail.updated_by;
     delete detail.created_at;
