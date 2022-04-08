@@ -9,7 +9,7 @@ module.exports = {
     async afterCreate(result) {
       while(true){
         try{
-          await strapi.query('user', 'users-permissions').update({id:result.id}, {tathvaId: "T21-"+nanoid()});
+          await strapi.query('user', 'users-permissions').update({id:result.id}, {ragamId: "R22-"+nanoid()});
           break;
         } catch(err){
         }

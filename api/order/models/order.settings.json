@@ -22,7 +22,8 @@
         "donation",
         "workshop",
         "lecture",
-        "event"
+        "event",
+        "ragamReg"
       ]
     },
     "donationAmount": {

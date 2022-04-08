@@ -1,0 +1,22 @@
+{
+  "kind": "singleType",
+  "collectionName": "ragam_reg_amounts",
+  "info": {
+    "name": "ragamRegAmount",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "amount": {
+      "type": "decimal",
+      "default": 500,
+      "required": true,
+      "private": true
+    }
+  }
+}

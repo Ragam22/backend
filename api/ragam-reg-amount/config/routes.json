@@ -1,0 +1,28 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/ragam-reg-amount",
+      "handler": "ragam-reg-amount.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/ragam-reg-amount",
+      "handler": "ragam-reg-amount.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/ragam-reg-amount",
+      "handler": "ragam-reg-amount.delete",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

@@ -65,7 +65,7 @@
     "phoneNumber": {
       "type": "string"
     },
-    "tathvaId": {
+    "ragamId": {
       "type": "uid"
     },
     "collegeName": {
@@ -79,18 +79,18 @@
     },
     "registeredEvents": {
       "autoPopulate": true,
-      "via": "teamMembers",
-      "collection": "user-event-detail"
+      "collection": "user-event-detail",
+      "via": "teamMembers"
     },
     "registeredWorkshops": {
       "autoPopulate": true,
-      "via": "user",
-      "collection": "user-workshop-details"
+      "collection": "user-workshop-details",
+      "via": "user"
     },
     "registeredLectures": {
       "autoPopulate": true,
-      "via": "user",
-      "collection": "user-lecture-detail"
+      "collection": "user-lecture-detail",
+      "via": "user"
     },
     "state": {
       "type": "string"
@@ -100,6 +100,23 @@
     },
     "certificates": {
       "type": "json"
+    },
+    "gender": {
+      "type": "enumeration",
+      "enum": [
+        "male",
+        "female"
+      ]
+    },
+    "isRagamReg": {
+      "type": "boolean"
+    },
+    "hostelChoice": {
+      "type": "enumeration",
+      "enum": [
+        "common",
+        "individual"
+      ]
     }
   }
 }

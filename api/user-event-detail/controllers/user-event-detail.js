@@ -15,11 +15,15 @@ module.exports = {
 
     if (!eventObj) return ctx.badRequest("Event does not exist");
 
-    if (eventObj.regPrice !== 0) return ctx.badRequest("This is a paid event");
-
     let currentDate = new Date();
     if (!(new Date(eventObj.regStartDate) < currentDate && currentDate < new Date(eventObj.regEndDate)))
       return ctx.badRequest("Not in registration period");
+
+    if (eventObj.regPrice !== 0) {
+      return ctx.badRequest("This is a paid event");
+    } else if (!ctx.state.user.isRagamReg) {
+      return ctx.badRequest("Please complete ragam registration to register for this event.");
+    }
 
     const updateData = {
       teamMembers: [{ id: user.id }],
@@ -114,14 +118,12 @@ module.exports = {
         let foundReg = newUser["registeredEvents"].find((o) => o.event === eventDetail.event.id);
         if (foundReg) {
           if (foundReg.submissions.length > 0 || foundReg.userResponses)
-            return ctx.badRequest(`TathvaID ${newUser.tathvaId} has pending submissions. Cannot be added.`);
+            return ctx.badRequest(`RagamID ${newUser.ragamId} has pending submissions. Cannot be added.`);
 
           foundReg = await strapi.services["user-event-detail"].findOne({ id: foundReg.id });
 
-          strapi.log.debug(JSON.stringify(foundReg.teamMembers.length));
-
           if (foundReg.teamMembers.length > 1)
-            return ctx.badRequest(`TathvaID ${newUser.tathvaId} has already joined a team`);
+            return ctx.badRequest(`RagamID ${newUser.ragamId} has already joined a team`);
 
           await strapi.services["user-event-detail"].delete({
             id: foundReg.id,
