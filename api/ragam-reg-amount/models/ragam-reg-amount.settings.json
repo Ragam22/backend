@@ -1,6 +1,6 @@
 {
   "kind": "singleType",
-  "collectionName": "ragam_reg_amounts",
+  "collectionName": "ragam_reg_amount",
   "info": {
     "name": "ragamRegAmount",
     "description": ""
