@@ -16,19 +16,6 @@
       "plugin": "users-permissions",
       "model": "user"
     },
-    "paymentType": {
-      "type": "enumeration",
-      "enum": [
-        "donation",
-        "workshop",
-        "lecture",
-        "event",
-        "ragamReg"
-      ]
-    },
-    "donationAmount": {
-      "type": "integer"
-    },
     "orderId": {
       "type": "uid"
     },

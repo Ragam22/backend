@@ -115,8 +115,10 @@
       "type": "enumeration",
       "enum": [
         "common",
-        "individual"
-      ]
+        "individual",
+        "none"
+      ],
+      "default": "none"
     }
   }
 }

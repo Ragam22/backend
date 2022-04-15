@@ -12,11 +12,16 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "amount": {
+    "regAmount": {
       "type": "decimal",
       "default": 500,
       "required": true,
       "private": true
+    },
+    "hospitalityAmount": {
+      "type": "decimal",
+      "required": true,
+      "default": 500
     }
   }
 }

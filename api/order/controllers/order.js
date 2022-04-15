@@ -1,59 +1,205 @@
 "use strict";
 
+const onOrderComplete = async ({ user, entity, refCode }) => {
+  for (const e of entity) {
+    if (e.type === "event" || e.type === "workshop" || e.type === "lecture") {
+      await strapi
+        .query(e.type)
+        .model.query((qb) => {
+          qb.where("id", e.id);
+          qb.increment("currentRegCount", 1);
+        })
+        .fetch();
+    }
+    switch (e.type) {
+      case "workshop":
+        const workshopDetail = {
+          workshop: { id: e.id },
+          user: user,
+          workshopRefCode: refCode,
+        };
+        await strapi.services["user-workshop-details"].create(workshopDetail);
+        break;
+      case "lecture":
+        const lectureDetail = {
+          lecture: { id: e.id },
+          user: user,
+          lectureRefCode: refCode,
+        };
+        await strapi.services["user-lecture-detail"].create(lectureDetail);
+        break;
+      case "ragamReg":
+        await strapi.query("user", "users-permissions").update({ id: user.id }, { isRagamReg: true });
+        break;
+      case "hospitality":
+        await strapi
+          .query("user", "users-permissions")
+          .update({ id: user.id }, { gender: e.sex, hostelChoice: e.choice });
+        break;
+      case "event":
+        const eventDetail = {
+          event: entity.id,
+          teamMembers: entity.team,
+          eventRefCode: refCode,
+          status: "participating",
+        };
+        await strapi.services["user-event-detail"].create(eventDetail);
+        break;
+    }
+  }
+};
+
 module.exports = {
   async startPayment(ctx) {
     const { nanoid } = require("nanoid");
     const axios = require("axios");
 
-    const { user, paymentType, entity, refCode, donationAmount } = ctx.request.body;
+    const { refCode, events } = ctx.request.body;
 
-    if (user.id !== ctx.state.user.id) {
-      return ctx.unauthorized("Invalid User Id");
-    }
-
-    let orderObj = {
-      user,
-      paymentType,
-      refCode,
-      isPaymentComplete: false,
-    };
+    const user = await strapi.query("user", "users-permissions").findOne({ id: ctx.state.user.id });
 
     let orderAmount;
+    let orderBreakdown;
 
-    if (paymentType === "donation") {
-      if (typeof donationAmount !== "number") return ctx.badRequest("Please enter an amount to pay");
-      orderObj.donationAmount = donationAmount;
-      orderAmount = donationAmount;
-    } else if (paymentType === "ragamReg") {
-      if (ctx.state.user.isRagamReg) {
-        return ctx.badRequest("User has already registered for ragam.");
+    //id of event, workshop or lecture else null
+    let entity = null;
+
+    for (const e of events) {
+      switch (e.type) {
+        case "ragamReg": {
+          if (user.isRagamReg) {
+            return ctx.badRequest("User has already registered for ragam.");
+          }
+          let regAmount = await strapi.query("ragam-reg-amount").find({ _limit: 1 }, ["regAmount"])[0].regAmount;
+
+          //if registered for choreonite
+          if (user.registeredEvents.find(({ event }) => event === process.env.CHOREONITE_EV_ID)) {
+            const choreoRegAmount = await strapi.services.event.findOne({ id: process.env.CHOREONITE_EV_ID }).regPrice;
+            regAmount -= choreoRegAmount;
+          }
+
+          //if registered for fashion show
+          if (user.registeredEvents.find(({ event }) => event === process.env.FASHION_EV_ID)) {
+            const fashionRegAmount = await strapi.services.event.findOne({ id: process.env.FASHION_EV_ID }).regPrice;
+            regAmount -= fashionRegAmount;
+          }
+
+          if (regAmount < 0) regAmount = 0;
+
+          orderAmount += regAmount;
+          orderBreakdown.ragamReg = regAmount;
+          break;
+        }
+
+        case "hospitality": {
+          if (user.hostelChoice !== "none") {
+            return ctx.badRequest("User has already completed hospitality reg");
+          }
+
+          if (e.sex === "female" && e.Choice === "individual") {
+            return ctx.badRequest("Girls dont get rooms smh");
+          }
+
+          let hospAmount = await strapi.query("ragam-reg-amount").find({ _limit: 1 }, ["hospitalityAmount"])[0]
+            .hospitalityAmount;
+
+          orderAmount += hospAmount;
+          orderBreakdown.hospitality = hospAmount;
+          break;
+        }
+
+        case "event": {
+          const eventId = e.event;
+          if (entity) {
+            return ctx.badRequest("send only one event");
+          } else {
+            entity = e;
+          }
+
+          let regAmount;
+          if (eventId === process.env.CHOREONITE_EV_ID) {
+            let choreoRegAmount = await strapi.services.event.findOne({ id: process.env.CHOREONITE_EV_ID }).regPrice;
+            regAmount = choreoRegAmount + (e.team?.length || 0) * choreoRegAmount;
+          } else if (eventId === process.env.FASHION_EV_ID) {
+            let fashionRegAmount = await strapi.services.event.findOne({ id: process.env.FASHION_EV_ID }).regPrice;
+            regAmount = fashionRegAmount + (e.team?.length || 0) * fashionRegAmount;
+          } else {
+            break;
+          }
+
+          if (teamMembers.length > (await strapi.services.event.findOne({ id: eventId }).maxTeamSize))
+            return ctx.badRequest("Too big");
+
+          const ragamRegAmount = await strapi.query("ragam-reg-amount").find({ _limit: 1 }, ["regAmount"])[0].regAmount;
+          const teamMembers = [];
+          for (const rId of [user.ragamId, ...(e.team || [])]) {
+            const u = await strapi.query("user", "users-permissions").findOne({ ragamId: rId });
+            if (!u) return ctx.badRequest("Invalid ID");
+            if (u.registeredEvents.find((o) => o.event === eventId)) {
+              return ctx.badRequest(`RagamID ${rId} has already joined a team`);
+            }
+
+            let uAmount = u.isRagamReg ? regAmount - ragamRegAmount : regAmount;
+            orderAmount += uAmount;
+            orderBreakdown["event." + rId] = uAmount;
+            teamMembers.push({ id: u.id });
+          }
+
+          e.team = teamMembers;
+
+          break;
+        }
+
+        case "workshop": {
+          const workshopAmount = await strapi.services.workshop.findOne({ id: e.id }).regPrice;
+          orderAmount += workshopAmount;
+          orderBreakdown.workshopReg = workshopAmount;
+
+          if (entity) {
+            return ctx.badRequest("send only one event");
+          } else {
+            entity = e;
+          }
+          break;
+        }
+
+        case "lecture": {
+          const lectureAmount = await strapi.services.lecture.findOne({ id: e.id }).regPrice;
+          orderAmount += lectureAmount;
+          orderBreakdown.lectureReg = lectureAmount;
+
+          if (entity) {
+            return ctx.badRequest("send only one event");
+          } else {
+            entity = e;
+          }
+          break;
+        }
+
+        default:
+          return ctx.badRequest("invalid payment type");
       }
-      const regAmount = await strapi.query("ragam-reg-amount").find({ _limit: 1 }, ["amount"])[0].amount;
-      orderAmount = regAmount * 100;
-    } else {
-      if (typeof entity === "undefined") return ctx.badRequest("Please enter a valid entity");
+    }
 
-      orderObj.entity = {
-        id: entity.id,
-      };
-
-      if (paymentType !== "event" && paymentType !== "workshop" && paymentType !== "lecture")
-        return ctx.badRequest("Invalid payment type");
-
-      const found = await strapi.services[paymentType].findOne({ id: entity.id });
-      if (found === null) return ctx.badRequest("Invalid entity id");
+    if (entity !== null) {
+      const found = await strapi.services[entity.type].findOne({ id: entity.id });
       if (found.currentRegCount >= found.maxRegCount) return ctx.badRequest("Max capacity has been reached");
-      if (found.regPrice === 0) return ctx.badRequest("Registration is free!");
-
-      orderAmount = Math.floor(found.regPrice * 100);
 
       let existing = await strapi.services.order.findOne({
-        "user.id": orderObj.user.id,
-        paymentType: orderObj.paymentType,
-        entity: JSON.stringify(orderObj.entity),
+        "user.id": user.id,
+        entity: JSON.stringify(events),
       });
 
       if (existing !== null) return { orderId: existing.orderId };
+    }
+
+    orderAmount = Math.floor(orderAmount * 100);
+
+    if (orderAmount == 0) {
+      await onOrderComplete({ user, entity: events });
+      return {
+        orderId: null,
+      };
     }
 
     const razorpayBody = {
@@ -69,10 +215,18 @@ module.exports = {
 
     try {
       const response = await axios.post("https://api.razorpay.com/v1/orders", razorpayBody, { auth: razorAuth });
-      orderObj.orderId = response.data.id;
-      orderObj.receipt = response.data.receipt;
+
+      let orderObj = {
+        user: { id: user.id },
+        refCode: refCode,
+        isPaymentComplete: false,
+        orderId: response.data.id,
+        receipt: response.data.receipt,
+        entity: events,
+      };
+
       await strapi.services.order.create(orderObj);
-      return { orderId: response.data.id };
+      return { orderId: response.data.id, orderBreakdown };
     } catch (error) {
       return ctx.badRequest("Payment Failed");
     }
@@ -93,54 +247,7 @@ module.exports = {
     });
     await strapi.services.order.update({ id: orderObj.id }, { isPaymentComplete: true });
 
-    if (orderObj.paymentType === "event" || orderObj.paymentType === "workshop" || orderObj.paymentType === "lecture") {
-      await strapi
-        .query(orderObj.paymentType)
-        .model.query((qb) => {
-          qb.where("id", orderObj.entity.id);
-          qb.increment("currentRegCount", 1);
-        })
-        .fetch();
-    }
-
-    switch (orderObj.paymentType) {
-      case "event":
-        const eventDetail = {
-          event: orderObj.entity,
-          teamMembers: [orderObj.user],
-          eventRefCode: orderObj.refCode,
-          status: "participating",
-        };
-        await strapi.services["user-event-detail"].create(eventDetail);
-        break;
-      case "workshop":
-        const workshopDetail = {
-          workshop: orderObj.entity,
-          user: orderObj.user,
-          workshopRefCode: orderObj.refCode,
-        };
-        await strapi.services["user-workshop-details"].create(workshopDetail);
-        break;
-      case "lecture":
-        const lectureDetail = {
-          lecture: orderObj.entity,
-          user: orderObj.user,
-          lectureRefCode: orderObj.refCode,
-        };
-        await strapi.services["user-lecture-detail"].create(lectureDetail);
-        break;
-      case "donation":
-        await strapi
-          .query("donation-total")
-          .model.query((qb) => {
-            qb.increment("amount", orderObj.donationAmount / 100);
-          })
-          .fetch();
-        break;
-      case "ragamReg":
-        await strapi.query("user", "users-permissions").update({ id: orderObj.user.id }, { isRagamReg: true });
-        break;
-    }
+    await onOrderComplete(orderObj);
 
     return { status: "ok" };
   },
