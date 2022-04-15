@@ -108,7 +108,7 @@ module.exports = {
             return ctx.badRequest("Girls dont get rooms smh");
           }
 
-          let hospAmount = (await strapi.query("ragam-reg-amount").find())[0].hospitalityAmount;
+          const hospAmount = (await strapi.query("ragam-reg-amount").find())[0][`${e.choice}RoomAmount`];
 
           orderAmount += hospAmount;
           orderBreakdown.hospitality = hospAmount;
