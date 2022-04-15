@@ -104,7 +104,7 @@ module.exports = {
             return ctx.badRequest("User has already completed hospitality reg");
           }
 
-          if (e.sex === "female" && e.Choice === "individual") {
+          if (e.sex === "female" && e.choice === "individual") {
             return ctx.badRequest("Girls dont get rooms smh");
           }
 
@@ -133,7 +133,6 @@ module.exports = {
               })
             ).regPrice;
             regAmount = choreoRegAmount;
-            strapi.log.debug("choreo: " + regAmount);
           } else if (eventId == process.env.FASHION_EV_ID) {
             const fashionRegAmount = (
               await strapi.services.event.findOne({
