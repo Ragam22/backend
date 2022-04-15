@@ -8,20 +8,19 @@
   "options": {
     "increments": true,
     "timestamps": true,
-    "draftAndPublish": false
+    "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "regAmount": {
-      "type": "decimal",
-      "default": 500,
-      "required": true,
-      "private": true
-    },
     "hospitalityAmount": {
       "type": "decimal",
       "required": true,
       "default": 500
+    },
+    "regAmount": {
+      "type": "decimal",
+      "required": true,
+      "default": 400
     }
   }
 }

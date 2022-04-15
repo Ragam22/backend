@@ -109,7 +109,8 @@
       ]
     },
     "isRagamReg": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     },
     "hostelChoice": {
       "type": "enumeration",

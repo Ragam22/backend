@@ -38,8 +38,8 @@ const onOrderComplete = async ({ user, entity, refCode }) => {
         break;
       case "event":
         const eventDetail = {
-          event: entity.id,
-          teamMembers: entity.team,
+          event: e.id,
+          teamMembers: e.team,
           eventRefCode: refCode,
           status: "participating",
         };
@@ -58,8 +58,8 @@ module.exports = {
 
     const user = await strapi.query("user", "users-permissions").findOne({ id: ctx.state.user.id });
 
-    let orderAmount;
-    let orderBreakdown;
+    let orderAmount = 0;
+    let orderBreakdown = {};
 
     //id of event, workshop or lecture else null
     let entity = null;
@@ -70,17 +70,25 @@ module.exports = {
           if (user.isRagamReg) {
             return ctx.badRequest("User has already registered for ragam.");
           }
-          let regAmount = await strapi.query("ragam-reg-amount").find({ _limit: 1 }, ["regAmount"])[0].regAmount;
+          let regAmount = (await strapi.query("ragam-reg-amount").find())[0].regAmount;
 
           //if registered for choreonite
-          if (user.registeredEvents.find(({ event }) => event === process.env.CHOREONITE_EV_ID)) {
-            const choreoRegAmount = await strapi.services.event.findOne({ id: process.env.CHOREONITE_EV_ID }).regPrice;
+          if (user.registeredEvents.find(({ event }) => event == process.env.CHOREONITE_EV_ID)) {
+            const choreoRegAmount = (
+              await strapi.services.event.findOne({
+                id: Number.parseInt(process.env.CHOREONITE_EV_ID),
+              })
+            ).regPrice;
             regAmount -= choreoRegAmount;
           }
 
           //if registered for fashion show
-          if (user.registeredEvents.find(({ event }) => event === process.env.FASHION_EV_ID)) {
-            const fashionRegAmount = await strapi.services.event.findOne({ id: process.env.FASHION_EV_ID }).regPrice;
+          if (user.registeredEvents.find(({ event }) => event == process.env.FASHION_EV_ID)) {
+            const fashionRegAmount = (
+              await strapi.services.event.findOne({
+                id: Number.parseInt(process.env.FASHION_EV_ID),
+              })
+            ).regPrice;
             regAmount -= fashionRegAmount;
           }
 
@@ -100,8 +108,7 @@ module.exports = {
             return ctx.badRequest("Girls dont get rooms smh");
           }
 
-          let hospAmount = await strapi.query("ragam-reg-amount").find({ _limit: 1 }, ["hospitalityAmount"])[0]
-            .hospitalityAmount;
+          let hospAmount = (await strapi.query("ragam-reg-amount").find())[0].hospitalityAmount;
 
           orderAmount += hospAmount;
           orderBreakdown.hospitality = hospAmount;
@@ -109,28 +116,38 @@ module.exports = {
         }
 
         case "event": {
-          const eventId = e.event;
+          const eventId = e.id;
           if (entity) {
             return ctx.badRequest("send only one event");
           } else {
             entity = e;
           }
 
+          const ragamRegAmount = (await strapi.query("ragam-reg-amount").find())[0].regAmount;
           let regAmount;
-          if (eventId === process.env.CHOREONITE_EV_ID) {
-            let choreoRegAmount = await strapi.services.event.findOne({ id: process.env.CHOREONITE_EV_ID }).regPrice;
-            regAmount = choreoRegAmount + (e.team?.length || 0) * choreoRegAmount;
-          } else if (eventId === process.env.FASHION_EV_ID) {
-            let fashionRegAmount = await strapi.services.event.findOne({ id: process.env.FASHION_EV_ID }).regPrice;
-            regAmount = fashionRegAmount + (e.team?.length || 0) * fashionRegAmount;
+
+          if (eventId == process.env.CHOREONITE_EV_ID) {
+            const choreoRegAmount = (
+              await strapi.services.event.findOne({
+                id: Number.parseInt(process.env.CHOREONITE_EV_ID),
+              })
+            ).regPrice;
+            regAmount = choreoRegAmount;
+            strapi.log.debug("choreo: " + regAmount);
+          } else if (eventId == process.env.FASHION_EV_ID) {
+            const fashionRegAmount = (
+              await strapi.services.event.findOne({
+                id: Number.parseInt(process.env.FASHION_EV_ID),
+              })
+            ).regPrice;
+            regAmount = fashionRegAmount;
           } else {
-            break;
+            regAmount = ragamRegAmount;
           }
 
-          if (teamMembers.length > (await strapi.services.event.findOne({ id: eventId }).maxTeamSize))
+          if ((e.team?.length || 0) + 1 > (await strapi.services.event.findOne({ id: eventId }).maxTeamSize))
             return ctx.badRequest("Too big");
 
-          const ragamRegAmount = await strapi.query("ragam-reg-amount").find({ _limit: 1 }, ["regAmount"])[0].regAmount;
           const teamMembers = [];
           for (const rId of [user.ragamId, ...(e.team || [])]) {
             const u = await strapi.query("user", "users-permissions").findOne({ ragamId: rId });
@@ -140,6 +157,7 @@ module.exports = {
             }
 
             let uAmount = u.isRagamReg ? regAmount - ragamRegAmount : regAmount;
+            if (uAmount < 0) uAmount = 0;
             orderAmount += uAmount;
             orderBreakdown["event." + rId] = uAmount;
             teamMembers.push({ id: u.id });
@@ -215,6 +233,10 @@ module.exports = {
 
     try {
       const response = await axios.post("https://api.razorpay.com/v1/orders", razorpayBody, { auth: razorAuth });
+
+      // const response = {
+      //   data: { id: nanoid(), receipt: nanoid() },
+      // };
 
       let orderObj = {
         user: { id: user.id },
