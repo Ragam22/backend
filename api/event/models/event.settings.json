@@ -114,6 +114,9 @@
       "type": "component",
       "repeatable": true,
       "component": "submission-info.submission-info"
+    },
+    "theme": {
+      "type": "string"
     }
   }
 }
