@@ -25,11 +25,7 @@
     "coverImage": {
       "model": "file",
       "via": "related",
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos"
-      ],
+      "allowedTypes": ["images", "files", "videos"],
       "plugin": "upload",
       "required": false,
       "pluginOptions": {}
@@ -95,11 +91,7 @@
     "posterImages": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos"
-      ],
+      "allowedTypes": ["images", "files", "videos"],
       "plugin": "upload",
       "required": false,
       "pluginOptions": {}
@@ -116,7 +108,12 @@
       "component": "submission-info.submission-info"
     },
     "theme": {
-      "type": "string"
+      "type": "enumeration",
+      "enum": ["Cyberpunk", "Steampunk", "Apocalypse", "Space Odyssey"]
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["Sports", "General", "Literary", "Music", "Dance", "Kalolsavam", "Quiz", "Ragnarok", "Fine Arts"]
     }
   }
 }
