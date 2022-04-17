@@ -1,6 +1,6 @@
 "use strict";
 
-const onOrderComplete = async ({ user, entity, refCode }) => {
+const onOrderComplete = async ({ user, entity, refCode, breakdown }) => {
   for (const e of entity) {
     if (e.type === "event" || e.type === "workshop" || e.type === "lecture") {
       await strapi
@@ -49,6 +49,26 @@ const onOrderComplete = async ({ user, entity, refCode }) => {
         await strapi.services["user-event-detail"].create(eventDetail);
         break;
     }
+
+    for (const [k, v] of Object.entries(breakdown)) {
+      if (k == "ragamReg" || k == "kalolsavReg") {
+        await strapi
+          .query("user", "users-permissions")
+          .model.query((qb) => {
+            qb.where("id", user.id);
+            qb.increment("amountPaid", v);
+          })
+          .fetch();
+      } else if (k.startsWith("event")) {
+        await strapi
+          .query("user", "users-permissions")
+          .model.query((qb) => {
+            qb.where("ragamId", k.substring(6));
+            qb.increment("amountPaid", v);
+          })
+          .fetch();
+      }
+    }
   }
 };
 
@@ -71,32 +91,21 @@ module.exports = {
       switch (e.type) {
         case "ragamReg":
         case "kalolsavReg": {
-          const [field, otherField, mainPay, otherPay] = {
-            ragamReg: ["isRagamReg", "isKalolsavReg", "regAmount", "kalolsavRegAmount"],
-            kalolsavReg: ["isKalolsavReg", "isRagamReg", "kalolsavRegAmount", "regAmount"],
+          const [field, mainPay] = {
+            ragamReg: ["isRagamReg", "regAmount"],
+            kalolsavReg: ["isKalolsavReg", "kalolsavRegAmount"],
           }[e.type];
 
           if (user[field]) {
             return ctx.badRequest("User has already completed " + e.type);
           }
           const regAmounts = (await strapi.query("ragam-reg-amount").find())[0];
-          let regAmount = regAmounts[mainPay];
-
-          const paidEvents = await strapi.services.event.find({ regType: "payment" }, ["id", "regPrice"]);
-
-          for (const e of paidEvents) {
-            if (user.registeredEvents.find(({ event }) => event == e.id)) {
-              regAmount -= e.regPrice;
-            }
-          }
-
-          if (user[otherField]) {
-            regAmount -= regAmounts[otherPay];
-          }
+          let regAmount = regAmounts[mainPay] - user.amountPaid;
 
           if (regAmount < 0) regAmount = 0;
 
           orderAmount += regAmount;
+
           orderBreakdown[e.type] = regAmount;
           break;
         }
@@ -112,8 +121,8 @@ module.exports = {
 
           const hospAmount = (await strapi.query("ragam-reg-amount").find())[0][`${e.choice}RoomAmount`];
 
-          orderAmount += hospAmount;
-          orderBreakdown.hospitality = hospAmount;
+          orderAmount += hospAmount * e.days;
+          orderBreakdown.hospitality = hospAmount * e.days;
           break;
         }
 
@@ -136,7 +145,6 @@ module.exports = {
           ];
 
           if ((e.team?.length || 0) + 1 > eventObj.maxTeamSize) return ctx.badRequest("Too big");
-          const paidEvents = await strapi.services.event.find({ regType: "payment" }, ["id", "regPrice"]);
 
           const teamMembers = [];
           for (const rId of [user.ragamId, ...(e.team || [])]) {
@@ -146,15 +154,7 @@ module.exports = {
               return ctx.badRequest(`RagamID ${rId} has already joined a team`);
             }
 
-            let uAmount = regAmount;
-            if (u.isRagamReg) uAmount -= ragamRegAmount;
-            if (u.isKalolsavReg) uAmount -= kalolsavRegAmount;
-
-            for (const pe of paidEvents) {
-              if (u.registeredEvents.find((o) => o.event === pe.id)) {
-                uAmount -= pe.regPrice;
-              }
-            }
+            let uAmount = regAmount - u.amountPaid;
 
             if (uAmount < 0) uAmount = 0;
             orderAmount += uAmount;
@@ -244,6 +244,7 @@ module.exports = {
         orderId: response.data.id,
         receipt: response.data.receipt,
         entity: events,
+        breakdown: orderBreakdown,
       };
 
       await strapi.services.order.create(orderObj);

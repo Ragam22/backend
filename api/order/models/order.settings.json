@@ -30,6 +30,9 @@
     },
     "isPaymentComplete": {
       "type": "boolean"
+    },
+    "breakdown": {
+      "type": "json"
     }
   }
 }

@@ -124,6 +124,11 @@
     "isKalolsavReg": {
       "type": "boolean",
       "default": false
+    },
+    "amountPaid": {
+      "type": "decimal",
+      "default": 0,
+      "private": true
     }
   }
 }
