@@ -19,10 +19,13 @@ module.exports = {
     if (!(new Date(eventObj.regStartDate) < currentDate && currentDate < new Date(eventObj.regEndDate)))
       return ctx.badRequest("Not in registration period");
 
-    if (eventObj.regPrice !== 0) {
+    if (eventObj.regType == "payment") {
       return ctx.badRequest("This is a paid event");
-    } else if (!ctx.state.user.isRagamReg) {
-      return ctx.badRequest("Please complete ragam registration to register for this event.");
+    } else if (eventObj.regType == "ragamReg") {
+      if (!ctx.state.user.isRagamReg)
+        return ctx.badRequest("Please complete ragam registration to register for this event.");
+    } else if (!ctx.state.user.isKalolsavReg) {
+      return ctx.badRequest("Please complete kalolsav registration to register for this event.");
     }
 
     const updateData = {
