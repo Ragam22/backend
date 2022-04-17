@@ -136,6 +136,7 @@ module.exports = {
           ];
 
           if ((e.team?.length || 0) + 1 > eventObj.maxTeamSize) return ctx.badRequest("Too big");
+          const paidEvents = await strapi.services.event.find({ regType: "payment" }, ["id", "regPrice"]);
 
           const teamMembers = [];
           for (const rId of [user.ragamId, ...(e.team || [])]) {
@@ -148,6 +149,12 @@ module.exports = {
             let uAmount = regAmount;
             if (u.isRagamReg) uAmount -= ragamRegAmount;
             if (u.isKalolsavReg) uAmount -= kalolsavRegAmount;
+
+            for (const pe of paidEvents) {
+              if (u.registeredEvents.find((o) => o.event === pe.id)) {
+                uAmount -= pe.regPrice;
+              }
+            }
 
             if (uAmount < 0) uAmount = 0;
             orderAmount += uAmount;
