@@ -31,6 +31,9 @@ const onOrderComplete = async ({ user, entity, refCode }) => {
       case "ragamReg":
         await strapi.query("user", "users-permissions").update({ id: user.id }, { isRagamReg: true });
         break;
+      case "kalolsavReg":
+        await strapi.query("user", "users-permissions").update({ id: user.id }, { isKalolsavReg: true });
+        break;
       case "hospitality":
         await strapi
           .query("user", "users-permissions")
@@ -66,36 +69,35 @@ module.exports = {
 
     for (const e of events) {
       switch (e.type) {
-        case "ragamReg": {
-          if (user.isRagamReg) {
-            return ctx.badRequest("User has already registered for ragam.");
-          }
-          let regAmount = (await strapi.query("ragam-reg-amount").find())[0].regAmount;
+        case "ragamReg":
+        case "kalolsavReg": {
+          const [field, otherField, mainPay, otherPay] = {
+            ragamReg: ["isRagamReg", "isKalolsavReg", "regAmount", "kalolsavRegAmount"],
+            kalolsavReg: ["isKalolsavReg", "isRagamReg", "kalolsavRegAmount", "regAmount"],
+          }[e.type];
 
-          //if registered for choreonite
-          if (user.registeredEvents.find(({ event }) => event == process.env.CHOREONITE_EV_ID)) {
-            const choreoRegAmount = (
-              await strapi.services.event.findOne({
-                id: Number.parseInt(process.env.CHOREONITE_EV_ID),
-              })
-            ).regPrice;
-            regAmount -= choreoRegAmount;
+          if (user[field]) {
+            return ctx.badRequest("User has already completed " + e.type);
+          }
+          const regAmounts = (await strapi.query("ragam-reg-amount").find())[0];
+          let regAmount = regAmounts[mainPay];
+
+          const paidEvents = await strapi.services.event.find({ regType: "payment" }, ["id", "regPrice"]);
+
+          for (const e of paidEvents) {
+            if (user.registeredEvents.find(({ event }) => event == e.id)) {
+              regAmount -= e.regPrice;
+            }
           }
 
-          //if registered for fashion show
-          if (user.registeredEvents.find(({ event }) => event == process.env.FASHION_EV_ID)) {
-            const fashionRegAmount = (
-              await strapi.services.event.findOne({
-                id: Number.parseInt(process.env.FASHION_EV_ID),
-              })
-            ).regPrice;
-            regAmount -= fashionRegAmount;
+          if (user[otherField]) {
+            regAmount -= regAmounts[otherPay];
           }
 
           if (regAmount < 0) regAmount = 0;
 
           orderAmount += regAmount;
-          orderBreakdown.ragamReg = regAmount;
+          orderBreakdown[e.type] = regAmount;
           break;
         }
 
@@ -123,29 +125,17 @@ module.exports = {
             entity = e;
           }
 
-          const ragamRegAmount = (await strapi.query("ragam-reg-amount").find())[0].regAmount;
-          let regAmount;
+          const regAmounts = (await strapi.query("ragam-reg-amount").find())[0];
+          const ragamRegAmount = regAmounts.regAmount;
+          const kalolsavRegAmount = regAmounts.kalolsavRegAmount;
 
-          if (eventId == process.env.CHOREONITE_EV_ID) {
-            const choreoRegAmount = (
-              await strapi.services.event.findOne({
-                id: Number.parseInt(process.env.CHOREONITE_EV_ID),
-              })
-            ).regPrice;
-            regAmount = choreoRegAmount;
-          } else if (eventId == process.env.FASHION_EV_ID) {
-            const fashionRegAmount = (
-              await strapi.services.event.findOne({
-                id: Number.parseInt(process.env.FASHION_EV_ID),
-              })
-            ).regPrice;
-            regAmount = fashionRegAmount;
-          } else {
-            regAmount = ragamRegAmount;
-          }
+          const eventObj = await strapi.services.event.findOne({ id: eventId });
 
-          if ((e.team?.length || 0) + 1 > (await strapi.services.event.findOne({ id: eventId }).maxTeamSize))
-            return ctx.badRequest("Too big");
+          let regAmount = { payment: eventObj.regPrice, ragamReg: ragamRegAmount, kalolsavReg: kalolsavRegAmount }[
+            eventObj.regType
+          ];
+
+          if ((e.team?.length || 0) + 1 > eventObj.maxTeamSize) return ctx.badRequest("Too big");
 
           const teamMembers = [];
           for (const rId of [user.ragamId, ...(e.team || [])]) {
@@ -155,7 +145,10 @@ module.exports = {
               return ctx.badRequest(`RagamID ${rId} has already joined a team`);
             }
 
-            let uAmount = u.isRagamReg ? regAmount - ragamRegAmount : regAmount;
+            let uAmount = regAmount;
+            if (u.isRagamReg) uAmount -= ragamRegAmount;
+            if (u.isKalolsavReg) uAmount -= kalolsavRegAmount;
+
             if (uAmount < 0) uAmount = 0;
             orderAmount += uAmount;
             orderBreakdown["event." + rId] = uAmount;

@@ -120,6 +120,10 @@
         "none"
       ],
       "default": "none"
+    },
+    "isKalolsavReg": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

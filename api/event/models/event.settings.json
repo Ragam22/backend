@@ -114,6 +114,12 @@
     "category": {
       "type": "enumeration",
       "enum": ["Sports", "General", "Literary", "Music", "Dance", "Kalolsavam", "Quiz", "Ragnarok", "Fine Arts"]
+    },
+    "regType": {
+      "type": "enumeration",
+      "enum": ["ragamReg", "kalolsavReg", "payment"],
+      "default": "ragamReg",
+      "required": true
     }
   }
 }
