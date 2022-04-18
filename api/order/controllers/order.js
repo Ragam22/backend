@@ -168,7 +168,7 @@ module.exports = {
         }
 
         case "workshop": {
-          const workshopAmount = await strapi.services.workshop.findOne({ id: e.id }).regPrice;
+          const workshopAmount = (await strapi.services.workshop.findOne({ id: e.id })).regPrice;
           orderAmount += workshopAmount;
           orderBreakdown.workshopReg = workshopAmount;
 
@@ -181,7 +181,7 @@ module.exports = {
         }
 
         case "lecture": {
-          const lectureAmount = await strapi.services.lecture.findOne({ id: e.id }).regPrice;
+          const lectureAmount = (await strapi.services.lecture.findOne({ id: e.id })).regPrice;
           orderAmount += lectureAmount;
           orderBreakdown.lectureReg = lectureAmount;
 
