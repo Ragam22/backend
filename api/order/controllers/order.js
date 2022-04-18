@@ -213,7 +213,7 @@ module.exports = {
     orderAmount = Math.floor(orderAmount * 100);
 
     if (orderAmount == 0) {
-      await onOrderComplete({ user, entity: events });
+      await onOrderComplete({ user, entity: events, breakdown: orderBreakdown});
       return {
         orderId: null,
       };
