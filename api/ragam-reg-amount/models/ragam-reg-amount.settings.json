@@ -31,6 +31,9 @@
       "type": "decimal",
       "default": 500,
       "required": true
+    },
+    "doubleRoomAmount": {
+      "type": "decimal"
     }
   }
 }

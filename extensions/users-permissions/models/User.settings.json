@@ -117,6 +117,7 @@
       "enum": [
         "common",
         "individual",
+        "double",
         "none"
       ],
       "default": "none"
@@ -129,6 +130,9 @@
       "type": "decimal",
       "default": 0,
       "private": true
+    },
+    "days": {
+      "type": "json"
     }
   }
 }

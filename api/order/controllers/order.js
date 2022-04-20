@@ -37,7 +37,18 @@ const onOrderComplete = async ({ user, entity, refCode, breakdown }) => {
       case "hospitality":
         await strapi
           .query("user", "users-permissions")
-          .update({ id: user.id }, { gender: e.sex, hostelChoice: e.choice });
+          .update({ id: user.id }, { gender: e.sex, hostelChoice: e.choice, days: e.days });
+
+        const sChar = e.sex[0].toUpperCase();
+        for (const dayS of e.days) {
+          await strapi
+            .query("room-counts")
+            .model.query((qb) => {
+              qb.where("id", 1);
+              qb.decrement(`${e.choice}${dayS}${sChar}`, 1);
+            })
+            .fetch();
+        }
         break;
       case "event":
         const eventDetail = {
@@ -115,14 +126,23 @@ module.exports = {
             return ctx.badRequest("User has already completed hospitality reg");
           }
 
-          if (e.sex === "female" && e.choice === "individual") {
+          if (e.sex === "female" && e.choice !== "common") {
             return ctx.badRequest("Girls dont get rooms smh");
           }
 
           const hospAmount = (await strapi.query("ragam-reg-amount").find())[0][`${e.choice}RoomAmount`];
 
-          orderAmount += hospAmount * e.days;
-          orderBreakdown.hospitality = hospAmount * e.days;
+          const roomCounts = (await strapi.query("room-counts").find())[0];
+          const sChar = e.sex[0].toUpperCase();
+          let cashMoney = 0;
+          for (const dayS of e.days) {
+            if (roomCounts[`${e.choice}${dayS}${sChar}`] <= 0)
+              return ctx.badRequest("There are no rooms available on " + dayS);
+            cashMoney += hospAmount;
+          }
+
+          orderAmount += cashMoney;
+          orderBreakdown.hospitality = cashMoney;
           break;
         }
 
@@ -202,18 +222,18 @@ module.exports = {
       const found = await strapi.services[entity.type].findOne({ id: entity.id });
       if (found.currentRegCount >= found.maxRegCount) return ctx.badRequest("Max capacity has been reached");
 
-      let existing = await strapi.services.order.findOne({
-        "user.id": user.id,
-        entity: JSON.stringify(events),
-      });
+      // let existing = await strapi.services.order.findOne({
+      //   "user.id": user.id,
+      //   entity: JSON.stringify(events),
+      // });
 
-      if (existing !== null) return { orderId: existing.orderId };
+      // if (existing !== null) return { orderId: existing.orderId };
     }
 
     orderAmount = Math.floor(orderAmount * 100);
 
     if (orderAmount == 0) {
-      await onOrderComplete({ user, entity: events, breakdown: orderBreakdown});
+      await onOrderComplete({ user, entity: events, breakdown: orderBreakdown });
       return {
         orderId: null,
       };
@@ -247,6 +267,7 @@ module.exports = {
         breakdown: orderBreakdown,
       };
 
+      // onOrderComplete(orderObj);
       await strapi.services.order.create(orderObj);
       return { orderId: response.data.id, orderBreakdown };
     } catch (error) {
