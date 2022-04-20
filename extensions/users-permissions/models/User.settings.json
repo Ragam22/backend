@@ -131,7 +131,7 @@
       "default": 0,
       "private": true
     },
-    "days": {
+    "hostelDays": {
       "type": "json"
     }
   }

@@ -34,6 +34,15 @@
     },
     "doubleRoomAmount": {
       "type": "decimal"
+    },
+    "doubleRoomAmountx2": {
+      "type": "decimal"
+    },
+    "individualRoomAmountx2": {
+      "type": "decimal"
+    },
+    "commonRoomAmountx2": {
+      "type": "decimal"
     }
   }
 }

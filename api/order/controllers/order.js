@@ -130,15 +130,15 @@ module.exports = {
             return ctx.badRequest("Girls dont get rooms smh");
           }
 
-          const hospAmount = (await strapi.query("ragam-reg-amount").find())[0][`${e.choice}RoomAmount`];
-
+          const regAmounts = (await strapi.query("ragam-reg-amount").find())[0];
+          const hospAmounts = [regAmounts[`${e.choice}RoomAmount`], regAmounts[`${e.choice}RoomAmountx2`]];
           const roomCounts = (await strapi.query("room-counts").find())[0];
           const sChar = e.sex[0].toUpperCase();
           let cashMoney = 0;
-          for (const dayS of e.days) {
+          for (const [i, dayS] of e.days.entries()) {
             if (roomCounts[`${e.choice}${dayS}${sChar}`] <= 0)
               return ctx.badRequest("There are no rooms available on " + dayS);
-            cashMoney += hospAmount;
+            cashMoney += hospAmounts[i];
           }
 
           orderAmount += cashMoney;
