@@ -22,6 +22,10 @@
       "required": true,
       "default": 400
     },
+    "accomodationPrice": {
+      "type": "json",
+      "required": true
+    },
     "commonRoomAmount": {
       "type": "decimal",
       "default": 500,
