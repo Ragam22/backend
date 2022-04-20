@@ -45,6 +45,7 @@ module.exports = {
       certificates: userObj.certificates,
       gender: userObj.gender,
       isRagamReg: userObj.isRagamReg,
+      isKalolsavReg: userObj.isKalolsavReg,
       hostelChoice: userObj.hostelChoice,
     };
 
