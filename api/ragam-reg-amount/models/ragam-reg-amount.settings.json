@@ -1,0 +1,48 @@
+{
+  "kind": "singleType",
+  "collectionName": "ragam_reg_amount",
+  "info": {
+    "name": "ragamRegAmount",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "individualRoomAmount": {
+      "type": "decimal",
+      "required": true,
+      "default": 500
+    },
+    "regAmount": {
+      "type": "decimal",
+      "required": true,
+      "default": 400
+    },
+    "commonRoomAmount": {
+      "type": "decimal",
+      "default": 500,
+      "required": true
+    },
+    "kalolsavRegAmount": {
+      "type": "decimal",
+      "default": 500,
+      "required": true
+    },
+    "doubleRoomAmount": {
+      "type": "decimal"
+    },
+    "doubleRoomAmountx2": {
+      "type": "decimal"
+    },
+    "individualRoomAmountx2": {
+      "type": "decimal"
+    },
+    "commonRoomAmountx2": {
+      "type": "decimal"
+    }
+  }
+}

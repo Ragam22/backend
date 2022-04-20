@@ -106,6 +106,20 @@
       "type": "component",
       "repeatable": true,
       "component": "submission-info.submission-info"
+    },
+    "theme": {
+      "type": "enumeration",
+      "enum": ["Cyberpunk", "Steampunk", "Apocalypse", "Space Odyssey"]
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["Sports", "General", "Literary", "Music", "Dance", "Kalolsavam", "Quiz", "Ragnarok", "Fine Arts"]
+    },
+    "regType": {
+      "type": "enumeration",
+      "enum": ["ragamReg", "kalolsavReg", "payment"],
+      "default": "ragamReg",
+      "required": true
     }
   }
 }

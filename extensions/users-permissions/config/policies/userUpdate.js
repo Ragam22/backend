@@ -8,7 +8,7 @@ module.exports = async (ctx, next) => {
   }
 
   // Extract the fields regular users should be able to edit
-  const { name, phoneNumber, collegeName, yearOfStudy, referralCode, state, district } = ctx.request.body;
+  const { name, phoneNumber, collegeName, yearOfStudy, referralCode, state, district, gender } = ctx.request.body;
 
   const updateData = {
     name,
@@ -18,6 +18,7 @@ module.exports = async (ctx, next) => {
     referralCode,
     state,
     district,
+    gender,
   };
 
   // remove properties from the update object that are undefined (not submitted by the user in the PUT request)

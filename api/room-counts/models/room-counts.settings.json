@@ -1,0 +1,39 @@
+{
+  "kind": "singleType",
+  "collectionName": "room_counts",
+  "info": {
+    "name": "roomCounts"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "individualSatM": {
+      "type": "integer"
+    },
+    "individualSunM": {
+      "type": "integer"
+    },
+    "doubleSatM": {
+      "type": "integer"
+    },
+    "doubleSunM": {
+      "type": "integer"
+    },
+    "commonSatM": {
+      "type": "integer"
+    },
+    "commonSunM": {
+      "type": "integer"
+    },
+    "commonSatF": {
+      "type": "integer"
+    },
+    "commonSunF": {
+      "type": "integer"
+    }
+  }
+}

@@ -16,18 +16,6 @@
       "plugin": "users-permissions",
       "model": "user"
     },
-    "paymentType": {
-      "type": "enumeration",
-      "enum": [
-        "donation",
-        "workshop",
-        "lecture",
-        "event"
-      ]
-    },
-    "donationAmount": {
-      "type": "integer"
-    },
     "orderId": {
       "type": "uid"
     },
@@ -42,6 +30,9 @@
     },
     "isPaymentComplete": {
       "type": "boolean"
+    },
+    "breakdown": {
+      "type": "json"
     }
   }
 }

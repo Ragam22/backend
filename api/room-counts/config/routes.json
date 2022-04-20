@@ -2,24 +2,24 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/donation-total",
-      "handler": "donation-total.find",
+      "path": "/room-counts",
+      "handler": "room-counts.find",
       "config": {
         "policies": []
       }
     },
     {
       "method": "PUT",
-      "path": "/donation-total",
-      "handler": "donation-total.update",
+      "path": "/room-counts",
+      "handler": "room-counts.update",
       "config": {
         "policies": []
       }
     },
     {
       "method": "DELETE",
-      "path": "/donation-total",
-      "handler": "donation-total.delete",
+      "path": "/room-counts",
+      "handler": "room-counts.delete",
       "config": {
         "policies": []
       }

@@ -7,12 +7,12 @@ module.exports = ({ env }) => ({
         client: 'postgres',
         host: env('DATABASE_HOST', '127.0.0.1'),
         port: env.int('DATABASE_PORT', 5432),
-        database: env('DATABASE_NAME', 'strapi'),
+        database: env('DATABASE_NAME', 'ragamdb'),
         username: env('DATABASE_USERNAME', ''),
         password: env('DATABASE_PASSWORD', ''),
       },
       options: {
-        ssl: false,
+        ssl: false,   
       },
 
       // settings: {
