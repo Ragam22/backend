@@ -47,6 +47,7 @@ module.exports = {
       isRagamReg: userObj.isRagamReg,
       isKalolsavReg: userObj.isKalolsavReg,
       hostelChoice: userObj.hostelChoice,
+      hostelDays: userObj.hostelDays,
     };
 
     for (let detail of filtered.registeredEvents) {

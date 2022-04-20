@@ -37,7 +37,7 @@ const onOrderComplete = async ({ user, entity, refCode, breakdown }) => {
       case "hospitality":
         await strapi
           .query("user", "users-permissions")
-          .update({ id: user.id }, { gender: e.sex, hostelChoice: e.choice, days: e.days });
+          .update({ id: user.id }, { gender: e.sex, hostelChoice: e.choice, hostelDays: e.days });
 
         const sChar = e.sex[0].toUpperCase();
         for (const dayS of e.days) {
