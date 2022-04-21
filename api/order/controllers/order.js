@@ -166,6 +166,10 @@ module.exports = {
 
           if ((e.team?.length || 0) + 1 > eventObj.maxTeamSize) return ctx.badRequest("Too big");
 
+          let currentDate = new Date();
+          if (!(new Date(eventObj.regStartDate) < currentDate && currentDate < new Date(eventObj.regEndDate)))
+            return ctx.badRequest("Not in registration period");
+
           const teamMembers = [];
           for (const rId of [user.ragamId, ...(e.team || [])]) {
             const u = await strapi.query("user", "users-permissions").findOne({ ragamId: rId });
