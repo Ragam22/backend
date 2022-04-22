@@ -170,6 +170,8 @@ module.exports = {
           if (!(new Date(eventObj.regStartDate) < currentDate && currentDate < new Date(eventObj.regEndDate)))
             return ctx.badRequest("Not in registration period");
 
+          const isSports = eventObj.category === "Sports";
+
           const teamMembers = [];
           for (const rId of [user.ragamId, ...(e.team || [])]) {
             const u = await strapi.query("user", "users-permissions").findOne({ ragamId: rId });
@@ -178,14 +180,20 @@ module.exports = {
               return ctx.badRequest(`RagamID ${rId} has already joined a team`);
             }
 
-            let uAmount = regAmount - u.amountPaid;
+            if (!isSports) {
+              let uAmount = regAmount - u.amountPaid;
 
-            if (uAmount < 0) uAmount = 0;
-            orderAmount += uAmount;
-            orderBreakdown["event." + rId] = uAmount;
+              if (uAmount < 0) uAmount = 0;
+              orderAmount += uAmount;
+              orderBreakdown["event." + rId] = uAmount;
+            }
             teamMembers.push({ id: u.id });
           }
 
+          if (isSports) {
+            orderBreakdown["sports"] = regAmount;
+            orderAmount += regAmount;
+          }
           e.team = teamMembers;
 
           break;
