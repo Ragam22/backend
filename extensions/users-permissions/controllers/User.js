@@ -146,4 +146,14 @@ module.exports = {
 
     return { success: true };
   },
+
+  async findOneAdmin(ctx) {
+    const ragamId = ctx.params.ragamid;
+
+    const user = await strapi.query("user", "users-permissions").findOne({ ragamId });
+
+    return sanitizeEntity(user, {
+      model: strapi.plugins["users-permissions"].models.user,
+    });
+  },
 };
