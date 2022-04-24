@@ -98,6 +98,9 @@ module.exports = {
     //id of event, workshop or lecture else null
     let entity = null;
 
+    //amount being paid for ragam and kalolsav reg in same request
+    let auxAmount = 0;
+
     for (const e of events) {
       switch (e.type) {
         case "ragamReg":
@@ -111,11 +114,12 @@ module.exports = {
             return ctx.badRequest("User has already completed " + e.type);
           }
           const regAmounts = (await strapi.query("ragam-reg-amount").find())[0];
-          let regAmount = regAmounts[mainPay] - user.amountPaid;
+          let regAmount = regAmounts[mainPay] - user.amountPaid - auxAmount;
 
           if (regAmount < 0) regAmount = 0;
 
           orderAmount += regAmount;
+          auxAmount += regAmount;
 
           orderBreakdown[e.type] = regAmount;
           break;
@@ -181,7 +185,9 @@ module.exports = {
             }
 
             if (!isSports) {
-              let uAmount = regAmount - u.amountPaid;
+              //for the requesting user, subtract any auxiliary amount that's already been counted
+
+              let uAmount = regAmount - u.amountPaid - (rId == user.ragamId ? auxAmount : 0);
 
               if (uAmount < 0) uAmount = 0;
               orderAmount += uAmount;
@@ -189,6 +195,9 @@ module.exports = {
             }
             teamMembers.push({ id: u.id });
           }
+
+          //add the amount paid for this event to the auxiliary amount
+          auxAmount += orderBreakdown["event." + user.ragamId];
 
           if (isSports) {
             orderBreakdown["sports"] = regAmount;
