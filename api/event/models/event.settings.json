@@ -109,7 +109,7 @@
     },
     "theme": {
       "type": "enumeration",
-      "enum": ["Cyberpunk", "Steampunk", "Apocalypse", "Space Odyssey"]
+      "enum": ["Cyberpunk", "Steampunk", "Apocalypse", "Space Odyssey", "Ragnarok", "TakeOne"]
     },
     "category": {
       "type": "enumeration",
