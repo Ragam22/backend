@@ -182,8 +182,8 @@ module.exports = {
 
           const teamMembers = [];
           for (const rId of [user.ragamId, ...(e.team || [])]) {
-            const u = await strapi.query("user", "users-permissions").findOne({ ragamId: rId });
-            if (!u) return ctx.badRequest("Invalid ID");
+            const u = await strapi.query("user", "users-permissions").findOne({ ragamId: rId.trim() });
+            if (!u) return ctx.badRequest("Invalid ID: " + rId);
             if (u.registeredEvents.find((o) => o.event === eventId)) {
               return ctx.badRequest(`RagamID ${rId} has already joined a team`);
             }
