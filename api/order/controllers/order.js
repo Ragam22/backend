@@ -168,7 +168,9 @@ module.exports = {
             eventObj.regType
           ];
 
-          if ((e.team?.length || 0) + 1 > eventObj.maxTeamSize) return ctx.badRequest("Too big");
+          const teamSize = (e.team?.length || 0) + 1;
+          if (teamSize > eventObj.maxTeamSize || teamSize < eventObj.minTeamSize)
+            return ctx.badRequest("Team size does not fit");
 
           let currentDate = new Date();
           if (!(new Date(eventObj.regStartDate) < currentDate && currentDate < new Date(eventObj.regEndDate)))
@@ -193,6 +195,7 @@ module.exports = {
               orderAmount += uAmount;
               orderBreakdown["event." + rId] = uAmount;
             }
+            if (teamMembers.find((o) => o.id === u.id)) return ctx.badRequest("repeat users found");
             teamMembers.push({ id: u.id });
           }
 
