@@ -130,9 +130,11 @@ module.exports = {
             return ctx.badRequest("User has already completed hospitality reg");
           }
 
-          if (e.sex === "female" && e.choice !== "common") {
-            return ctx.badRequest("Girls dont get rooms smh");
-          }
+          // if (e.sex === "female" && e.choice !== "common") {
+          //   return ctx.badRequest("Girls dont get rooms smh");
+          // }
+
+          if (e.days.filter((x) => x !== "Sat" && x !== "Sun").length) return ctx.badRequest("invalid days param");
 
           const regAmounts = (await strapi.query("ragam-reg-amount").find())[0];
           const hospAmounts = [regAmounts[`${e.choice}RoomAmount`], regAmounts[`${e.choice}RoomAmountx2`]];
