@@ -37,16 +37,16 @@
       "type": "integer"
     },
     "individualSatF": {
-      "type": "decimal"
+      "type": "integer"
     },
     "individualSunF": {
-      "type": "decimal"
+      "type": "integer"
     },
     "doubleSatF": {
-      "type": "decimal"
+      "type": "integer"
     },
     "doubleSunF": {
-      "type": "decimal"
+      "type": "integer"
     }
   }
 }
