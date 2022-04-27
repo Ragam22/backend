@@ -92,61 +92,6 @@ module.exports = {
     return filtered;
   },
 
-  async doManualReg(ctx) {
-    const ragamId = ctx.params.ragamid;
-
-    const user = await strapi.query("user", "users-permissions").findOne({ ragamId });
-
-    const { regType, regId } = ctx.request.body;
-
-    if (regType === "event" || regType === "workshop" || regType === "lecture") {
-      await strapi
-        .query(regType)
-        .model.query((qb) => {
-          qb.where("id", regId);
-          qb.increment("currentRegCount", 1);
-        })
-        .fetch();
-    }
-
-    switch (regType) {
-      case "event":
-        const eventDetail = {
-          event: regId,
-          teamMembers: [user],
-          eventRefCode: "spotreg",
-          status: "participating",
-        };
-        await strapi.services["user-event-detail"].create(eventDetail);
-        break;
-      case "workshop":
-        const workshopDetail = {
-          workshop: regId,
-          user: user,
-          workshopRefCode: "spotreg",
-        };
-        await strapi.services["user-workshop-details"].create(workshopDetail);
-        break;
-      case "lecture":
-        const lectureDetail = {
-          lecture: regId,
-          user: user,
-          lectureRefCode: "spotreg",
-        };
-        await strapi.services["user-lecture-detail"].create(lectureDetail);
-        break;
-      case "ragamReg":
-        if (entity.isRagamReg) {
-          return ctx.badRequest("User has already completed ragamReg");
-        }
-        await strapi.query("user", "users-permissions").update({ id: orderObj.user.id }, { isRagamReg: true });
-
-        break;
-    }
-
-    return { success: true };
-  },
-
   async findOneAdmin(ctx) {
     const ragamId = ctx.params.ragamid;
 
