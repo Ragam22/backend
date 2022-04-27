@@ -152,8 +152,41 @@ module.exports = {
 
     const user = await strapi.query("user", "users-permissions").findOne({ ragamId });
 
-    return sanitizeEntity(user, {
+    const filtered = sanitizeEntity(user, {
       model: strapi.plugins["users-permissions"].models.user,
     });
+
+    for (let detail of filtered.registeredEvents) {
+      let eventObj = await strapi.services["event"].findOne({
+        id: detail.event,
+      });
+
+      detail.event = {
+        id: eventObj.id,
+        name: eventObj.name,
+        description: eventObj.description,
+      };
+      delete detail.submissions;
+    }
+    for (const detail of filtered.registeredWorkshops) {
+      let workshopObj = await strapi.services["workshop"].findOne({
+        id: detail.workshop,
+      });
+      detail.workshop = {
+        id: workshopObj.id,
+        name: workshopObj.name,
+      };
+    }
+    for (const detail of filtered.registeredLectures) {
+      let lectureObj = await strapi.services["lecture"].findOne({
+        id: detail.lecture,
+      });
+      detail.lecture = {
+        id: lectureObj.id,
+        name: lectureObj.name,
+      };
+    }
+
+    return filtered;
   },
 };
