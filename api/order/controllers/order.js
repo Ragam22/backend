@@ -30,9 +30,23 @@ const onOrderComplete = async ({ user, entity, refCode, breakdown }) => {
         break;
       case "ragamReg":
         await strapi.query("user", "users-permissions").update({ id: user.id }, { isRagamReg: true });
+        await strapi
+          .query("reg-counts")
+          .model.query((qb) => {
+            qb.where("id", 1);
+            qb.increment(`ragamRegCount`, 1);
+          })
+          .fetch();
         break;
       case "kalolsavReg":
         await strapi.query("user", "users-permissions").update({ id: user.id }, { isKalolsavReg: true });
+        await strapi
+          .query("reg-counts")
+          .model.query((qb) => {
+            qb.where("id", 1);
+            qb.increment(`kalolsavRegCount`, 1);
+          })
+          .fetch();
         break;
       case "hospitality":
         await strapi

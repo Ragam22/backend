@@ -2,7 +2,7 @@
   "routes": [
     {
       "method": "POST",
-      "path":"/orders/pay",
+      "path": "/orders/pay",
       "handler": "order.startPayment",
       "config": {
         "policies": []
@@ -10,8 +10,24 @@
     },
     {
       "method": "POST",
-      "path":"/orders/paymentComplete",
+      "path": "/orders/paymentComplete",
       "handler": "order.onPaymentComplete",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/orders/spotpay",
+      "handler": "order.startSpotPayment",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/orders/spotPaymentComplete",
+      "handler": "order.onSpotRegComplete",
       "config": {
         "policies": []
       }
