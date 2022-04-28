@@ -184,6 +184,7 @@ const getOrderDetails = async ({ user: userQ, events }) => {
           throw "Not in registration period";
 
         const isSports = eventObj.category === "Sports";
+        const isQuiz = eventObj.name?.toLowerCase()?.includes('quiz')
 
         const teamMembers = [];
         for (const rId of [user.ragamId, ...(e.team || [])]) {
@@ -193,7 +194,7 @@ const getOrderDetails = async ({ user: userQ, events }) => {
             throw `RagamID ${rId} has already joined a team`;
           }
 
-          if (!isSports) {
+          if (!isSports && !isQuiz) {
             //for the requesting user, subtract any auxiliary amount that's already been counted
 
             let uAmount = regAmount - u.amountPaid - (rId == user.ragamId ? auxAmount : 0);
@@ -212,7 +213,11 @@ const getOrderDetails = async ({ user: userQ, events }) => {
         if (isSports) {
           orderBreakdown["sports"] = regAmount;
           orderAmount += regAmount;
+        } else if (isQuiz) {
+          orderBreakdown["quiz"] = regAmount;
+          orderAmount += regAmount;
         }
+
         e.team = teamMembers;
 
         break;
