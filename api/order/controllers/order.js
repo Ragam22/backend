@@ -184,7 +184,7 @@ const getOrderDetails = async ({ user: userQ, events }) => {
           throw "Not in registration period";
 
         const isSports = eventObj.category === "Sports";
-        const isQuiz = eventObj.name?.toLowerCase()?.includes('quiz')
+        const isQuiz = eventObj.name?.toLowerCase()?.includes("quiz");
 
         const teamMembers = [];
         for (const rId of [user.ragamId, ...(e.team || [])]) {
@@ -287,7 +287,7 @@ module.exports = {
 
     const { orderAmount, orderBreakdown, userId } = res;
     if (orderAmount == 0) {
-      await onOrderComplete({ user, entity: events, breakdown: orderBreakdown });
+      await onOrderComplete({ user: { id: userId }, entity: events, breakdown: orderBreakdown });
       return {
         orderId: null,
       };
@@ -343,7 +343,7 @@ module.exports = {
     const { orderAmount, orderBreakdown, userId } = res;
 
     if (orderAmount == 0) {
-      await onOrderComplete({ user, entity: events, breakdown: orderBreakdown });
+      await onOrderComplete({ user: { id: userId }, entity: events, breakdown: orderBreakdown });
       return {
         orderId: null,
       };
