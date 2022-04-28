@@ -1,21 +1,6 @@
 {
   "routes": [
     {
-      "method": "POST",
-      "path": "/users/:ragamid/manual-reg",
-      "handler": "User.doManualReg",
-      "config": {
-        "policies": [],
-        "prefix": "",
-        "description": "description",
-        "tag": {
-          "plugin": "users-permissions",
-          "name": "User",
-          "actionType": "update"
-        }
-      }
-    },
-    {
       "method": "GET",
       "path": "/users/admin/:ragamid",
       "handler": "User.findOneAdmin",

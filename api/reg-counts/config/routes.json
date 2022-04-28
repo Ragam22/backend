@@ -1,0 +1,28 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/reg-counts",
+      "handler": "reg-counts.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/reg-counts",
+      "handler": "reg-counts.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/reg-counts",
+      "handler": "reg-counts.delete",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

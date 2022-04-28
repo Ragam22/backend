@@ -1,0 +1,21 @@
+{
+  "kind": "singleType",
+  "collectionName": "reg_counts",
+  "info": {
+    "name": "RegCounts"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ragamRegCount": {
+      "type": "integer"
+    },
+    "kalolsavRegCount": {
+      "type": "integer"
+    }
+  }
+}
