@@ -82,9 +82,6 @@
     "rules": {
       "type": "text"
     },
-    "result": {
-      "type": "text"
-    },
     "announcements": {
       "type": "text"
     },
@@ -113,13 +110,33 @@
     },
     "category": {
       "type": "enumeration",
-      "enum": ["Sports", "General", "Literary", "Music", "Dance", "Kalolsavam", "Quiz", "Ragnarok", "Fine Arts", "TEDxNITC"]
+      "enum": [
+        "Sports",
+        "General",
+        "Literary",
+        "Music",
+        "Dance",
+        "Kalolsavam",
+        "Quiz",
+        "Ragnarok",
+        "Fine Arts",
+        "TEDxNITC"
+      ]
     },
     "regType": {
       "type": "enumeration",
       "enum": ["ragamReg", "kalolsavReg", "payment"],
       "default": "ragamReg",
       "required": true
+    },
+    "result": {
+      "type": "json",
+      "private": "true"
+    },
+    "publishResult": {
+      "type": "boolean",
+      "default": false,
+      "private": "true"
     }
   }
 }

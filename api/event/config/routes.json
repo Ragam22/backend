@@ -50,8 +50,16 @@
     },
     {
       "method": "POST",
-      "path": "/events/:id/setwinners",
-      "handler": "event.setWinners",
+      "path": "/events/:id/setresults",
+      "handler": "event.setResults",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/eventresults",
+      "handler": "event.getResults",
       "config": {
         "policies": []
       }
