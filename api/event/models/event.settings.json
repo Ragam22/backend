@@ -109,11 +109,11 @@
     },
     "theme": {
       "type": "enumeration",
-      "enum": ["Cyberpunk", "Steampunk", "Apocalypse", "Space Odyssey", "Ragnarok", "TakeOne"]
+      "enum": ["Cyberpunk", "Steampunk", "Apocalypse", "Space Odyssey", "Ragnarok", "TakeOne", "TEDxNITC"]
     },
     "category": {
       "type": "enumeration",
-      "enum": ["Sports", "General", "Literary", "Music", "Dance", "Kalolsavam", "Quiz", "Ragnarok", "Fine Arts"]
+      "enum": ["Sports", "General", "Literary", "Music", "Dance", "Kalolsavam", "Quiz", "Ragnarok", "Fine Arts", "TEDxNITC"]
     },
     "regType": {
       "type": "enumeration",
