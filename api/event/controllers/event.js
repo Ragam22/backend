@@ -39,4 +39,22 @@ module.exports = {
 
     return { success: true };
   },
+
+  async markAttendance(ctx) {
+    const eventId = Number.parseInt(ctx.params.id);
+    const rId = ctx.params.ragamid;
+
+    const user = await strapi.query("user", "users-permissions").findOne({ ragamId: rId });
+
+    const ued = user.registeredEvents.find((o) => o.event === eventId);
+    if (!ued) return ctx.badRequest("user has not registered for this event");
+
+    const mVals = ued.metaValues?.attendance ? ued.metaValues : { ...ued.metaValues, attendance: {} };
+
+    mVals.attendance[rId] = true;
+
+    await strapi.services["user-event-detail"].update({ id: ued.id }, { metaValues: mVals });
+
+    return { success: true };
+  },
 };
